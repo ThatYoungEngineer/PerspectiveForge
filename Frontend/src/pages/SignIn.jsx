@@ -2,11 +2,11 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import OAuth from "../components/OAuth"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import logo from "../assets/images/PerspectiveForge.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
-import { FaGoogle } from "react-icons/fa"
+// import { FaGoogle } from "react-icons/fa"
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { Link } from "react-router-dom"
 import * as yup from "yup"
@@ -19,7 +19,13 @@ const SignIn = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const {theme} = useSelector(state=>state.theme)
+  const {currentUser} = useSelector(state=>state.user)
   const [errorMessage , setErrorMessage] = useState(null)
+
+  useEffect(() => {
+    currentUser && navigate('/dashboard')  
+  })
+  
 
   const schema = yup.object().shape({
     email: yup
@@ -47,16 +53,7 @@ const SignIn = () => {
       try {
         setErrorMessage('')
         await dispatch(signInUser(userData))
-        .then((data) => {
-          console.log(data)
-          if (data.error?.message) {
-            setErrorMessage(data.error.message);
-          } else {
-            console.log(data);
-            navigate('/');
-          }
-        }
-      )
+        .then((data) => data.error?.message && setErrorMessage(data.error.message))
       } catch (error) {
         setErrorMessage(error)  
       }

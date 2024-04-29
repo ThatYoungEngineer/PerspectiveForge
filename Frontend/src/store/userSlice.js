@@ -80,7 +80,11 @@ export const oAuth = createAsyncThunk(
 const userSlice = createSlice({
     name : 'user',
     initialState,
-    reducers : {},
+    reducers : {
+        signOut : (state) => {
+            state.currentUser = null
+        }
+    },
     extraReducers: (builder) => {
         builder
        .addCase(signInUser.pending, (state) => {
@@ -88,7 +92,7 @@ const userSlice = createSlice({
        })
        .addCase(signInUser.fulfilled, (state, action) => {
             state.status = 'idle'
-            state.currentUser = action.payload.userData
+            state.currentUser = action.payload
             state.error = null
         })
         .addCase(signInUser.rejected, (state, action) => {
@@ -114,7 +118,7 @@ const userSlice = createSlice({
         })
         .addCase(oAuth.fulfilled, (state, action) => {
             state.status = 'idle'
-            state.currentUser = action.payload.userData
+            state.currentUser = action.payload
             state.error = null
         })
         .addCase(oAuth.rejected, (state, action) => {
@@ -124,4 +128,5 @@ const userSlice = createSlice({
     }
 })
 
+export const {signOut} = userSlice.actions
 export default userSlice.reducer

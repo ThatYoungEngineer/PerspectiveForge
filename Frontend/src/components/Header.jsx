@@ -1,10 +1,12 @@
 import { Navbar, Button, Dropdown, Avatar } from "flowbite-react"
 import { useNavigate, Link } from "react-router-dom"
 import { FaMoon, FaSun } from 'react-icons/fa'
+import { HiLogout } from "react-icons/hi"
 
 import logo from "../assets/images/PerspectiveForge.png"
 import { useSelector, useDispatch } from "react-redux"
 import { toggleTheme } from "../store/themeSlice"
+import { signOut } from "../store/userSlice"
 
 const Header = () => {
 
@@ -17,16 +19,19 @@ const Header = () => {
         dispatch(toggleTheme())
     }
 
-    console.log(currentUser)
-  return (
+    const handleSignOut = () => {
+        dispatch(signOut())
+    }
+
+    return (
     <>
         <Navbar fluid rounded border >
             <Navbar.Brand onClick={() => navigate('/')} >
                 <img src={logo} className=" w-44 cursor-pointer" alt="logo" />
             </Navbar.Brand>
-            <div className="flex gap-2 md:order-2">
+            <div className="flex gap-2 md:order-2 items-center justify-center">
                 <Button
-                    className='w-12 h-10 hidden sm:inline'
+                    className='w-12 h-10 hidden sm:flex items-center justify-center'
                     color='gray'
                     pill
                     onClick={handleThemeChange}
@@ -34,29 +39,29 @@ const Header = () => {
                     { theme === 'light' ? <FaMoon /> : <FaSun /> }
                 </Button>
 
-                {currentUser 
+                {currentUser?.userData 
                 ? <Dropdown
-                    className="w-48"                
+                    inline
+                    className="w-40"                
                     arrowIcon={false}
-                    inLine
                     label = {
                         <Avatar 
                             alt="user"
-                            img={currentUser.profilePhoto} 
-                            size='xs'
+                            img={currentUser.userData.profilePhoto} 
+                            size='md'
                             rounded
                         />
                     }
                 >
                     <Dropdown.Header>
-                        <span className="block text-sm">{currentUser.full_name}</span>
-                        <span className="block text-sm font-medium truncate">{currentUser.email}</span>
+                        <span className="block text-sm">{currentUser.userData.full_name}</span>
+                        <span className="block text-sm font-medium truncate">{currentUser.userData.email}</span>
                     </Dropdown.Header>
                     <Link to={'/dashboard?tab=profile'}>
                         <Dropdown.Item>Profile</Dropdown.Item>
-                        <Dropdown.Divider />
-                        <Dropdown.Item>Sign Out</Dropdown.Item>
                     </Link>
+                        <Dropdown.Divider />
+                        <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>Sign Out</Dropdown.Item>
                 </Dropdown>
                 : <Button outline gradientDuoTone="purpleToBlue" onClick={() => navigate('/signup') }  >
                     Sign Up

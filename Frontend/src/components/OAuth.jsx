@@ -8,11 +8,9 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 
 import { useDispatch } from'react-redux'
 import { oAuth } from '../store/userSlice.js'
-import { useNavigate } from 'react-router'
  
 const OAuth = () => {
     const dispatch = useDispatch()  
-    const navigate = useNavigate()
     const [successMessage, setSuccessMessage] = useState('') 
     const [errorMessage, setErrorMessage] = useState('') 
 
@@ -26,10 +24,10 @@ const OAuth = () => {
             setSuccessMessage('')
             const resultFromGoogle = await signInWithPopup(auth, provider)
             const userData = resultFromGoogle._tokenResponse
+            console.log(userData)
             dispatch(oAuth(userData))
             .then((data) => {
                 setSuccessMessage(data.payload.message) 
-                navigate('/') 
             })
             .catch((error) => {
                 setErrorMessage(error)
@@ -41,19 +39,19 @@ const OAuth = () => {
 
     return ( 
         <>
-            <Button gradientDuoTone="purpleToBlue" type='button' onClick={handleGoogleClick} >
+            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} >
                 <AiFillGoogleCircle fontSize={20} className='mr-2' />
                 Continue with Google
             </Button>
 
             {successMessage && (
-                <Alert color="success" icon={IoIosCheckmarkCircleOutline}>
+                <Alert color="success" icon={IoIosCheckmarkCircleOutline} className='mt-5'>
                     {successMessage}
                 </Alert>
             )}
 
             {errorMessage && (
-                <Alert color="failure" icon={IoCloseCircleOutline}>
+                <Alert color="failure" icon={IoCloseCircleOutline} className='mt-5'>
                     {errorMessage}
                 </Alert>
             )}

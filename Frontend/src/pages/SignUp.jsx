@@ -1,13 +1,13 @@
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import logo from "../assets/images/PerspectiveForge.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
-import { FaGoogle } from "react-icons/fa"
+// import { FaGoogle } from "react-icons/fa"
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux" 
@@ -17,11 +17,16 @@ import OAuth from "../components/OAuth"
 const SignUp = () => {
     
     const dispatch = useDispatch()
-    const {status} = useSelector(state=>state.user) 
+    const navigate = useNavigate()
+    const {currentUser, status} = useSelector(state=>state.user) 
     const {theme} = useSelector(state=>state.theme) 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    useEffect(() => {
+      currentUser && navigate('/dashboard')
+    }, [currentUser])
+    
 
     const schema = yup.object().shape({
         full_name: yup
@@ -50,6 +55,7 @@ const SignUp = () => {
         },
         validationSchema: schema,
         onSubmit: async (values, { resetForm } ) => {
+            document.getElementById("password").blur();
             const userData = {
                 full_name: values.full_name,
                 email: values.email,
@@ -125,6 +131,7 @@ const SignUp = () => {
                             id="password"
                             name="password"
                             type="password"
+                            placeholder="pass***"
                             value={signUpFormik.values.password} 
                             onBlur={signUpFormik.handleBlur}
                             onChange={signUpFormik.handleChange} 
