@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePhoto: {
         type: String,
-        default: null    
+        default: "https://c4.wallpaperflare.com/wallpaper/966/456/890/tekken-tag-tournament-2-jin-kazama-2560x1600-video-games-tekken-hd-art-wallpaper-preview.jpg" 
     }
 }, {timestamps: true}
 );

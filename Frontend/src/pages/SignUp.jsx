@@ -17,16 +17,11 @@ import OAuth from "../components/OAuth"
 const SignUp = () => {
     
     const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const {currentUser, status} = useSelector(state=>state.user) 
+    const {status} = useSelector(state=>state.user) 
     const {theme} = useSelector(state=>state.theme) 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    useEffect(() => {
-      currentUser && navigate('/dashboard')
-    }, [currentUser])
-    
 
     const schema = yup.object().shape({
         full_name: yup
@@ -84,7 +79,7 @@ const SignUp = () => {
   return (
     <>
         <Header />
-        <section className="w-full min-h-[90vh] h-[600px] flex items-center justify-center">
+        <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
             <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col ${theme==='light'? 'bg-green-50': 'bg-[rgb(28,37,61)]'}`}>
                 <img src={logo} className=" w-44 cursor-pointer " alt="logo" />
                 <h2 className="text-sm"> &quot;Crafting Perspectives, Shaping Minds&quot; </h2>
@@ -104,7 +99,7 @@ const SignUp = () => {
                             onBlur={signUpFormik.handleBlur}
                             onChange={signUpFormik.handleChange} 
                         />
-                        {(signUpFormik.touched.full_name && signUpFormik.errors.full_name) && <p className='mt-1 text-xs text-red-500'>{signUpFormik.errors.full_name}</p>}
+                        {(signUpFormik.touched.full_name && signUpFormik.errors.full_name) && <p className='mt-1 text-xs text-red-600'>{signUpFormik.errors.full_name}</p>}
 
                     </div>
                     <div>
@@ -120,7 +115,7 @@ const SignUp = () => {
                             onBlur={signUpFormik.handleBlur}
                             onChange={signUpFormik.handleChange} 
                         />
-                        {(signUpFormik.touched.email && signUpFormik.errors.email) && <p className='mt-1 text-xs text-red-500'>{signUpFormik.errors.email}</p>}
+                        {(signUpFormik.touched.email && signUpFormik.errors.email) && <p className='mt-1 text-xs text-red-600'>{signUpFormik.errors.email}</p>}
 
                     </div>
                     <div>
@@ -131,7 +126,7 @@ const SignUp = () => {
                             id="password"
                             name="password"
                             type="password"
-                            placeholder="pass***"
+                            placeholder="password"
                             value={signUpFormik.values.password} 
                             onBlur={signUpFormik.handleBlur}
                             onChange={signUpFormik.handleChange} 
@@ -154,8 +149,8 @@ const SignUp = () => {
                     <OAuth />
                     <span className="text-sm">
                         Have an account? 
-                        <Link to="/signin" className="ml-1 text-green-500">
-                            Sign In
+                        <Link to="/login" className="ml-1 text-green-500">
+                            Login
                         </Link>
                     </span>
 

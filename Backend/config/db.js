@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-const dot = dotenv.config( { path: 'Backend/config/.env'} )
+const _dot = dotenv.config( { path: 'Backend/config/.env'} )
 
 const connectDB = async () => {
     mongoose.set('strictQuery', false);
@@ -10,7 +10,7 @@ const connectDB = async () => {
         console.log('Connecting to MongoDB...');
         const conn = await mongoose.connect(process.env.MONGO_URI);
         console.log('MongoDB Connected');
-        console.log(`Mongo DB is connected : ${conn.connection.host}`);
+        // console.log(`Mongo DB is connected : ${conn.connection.host}`);
 
     } catch (error) {
         console.error('Error connecting to MongoDB:', error)

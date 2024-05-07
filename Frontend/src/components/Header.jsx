@@ -63,14 +63,26 @@ const Header = () => {
                         <Dropdown.Divider />
                         <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>Sign Out</Dropdown.Item>
                 </Dropdown>
-                : <Button outline gradientDuoTone="purpleToBlue" onClick={() => navigate('/signup') }  >
-                    Sign Up
-                </Button>
+                :   <Link to={'/login'} >
+                        <Button outline gradientDuoTone="purpleToBlue">
+                            Login
+                        </Button>
+                    </Link> 
                 }
                 <Navbar.Toggle />
             </div>
             
             <Navbar.Collapse>
+                <div className="w-full sm:hidden flex items-center justify-center">
+                    <Button
+                        className='w-12 h-10 flex items-center justify-center'
+                        color='gray'
+                        pill
+                        onClick={handleThemeChange}
+                    >
+                        { theme === 'light' ? <FaMoon /> : <FaSun /> }
+                    </Button>
+                </div>
                 <Link to={'/'}> Home </Link>
                 <Link to={'/'}> About </Link>
                 <Link to={'/'}> Services </Link>

@@ -17,15 +17,9 @@ import { signInUser } from "../store/userSlice"
 const SignIn = () => {
 
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const {theme} = useSelector(state=>state.theme)
-  const {currentUser} = useSelector(state=>state.user)
   const [errorMessage , setErrorMessage] = useState(null)
 
-  useEffect(() => {
-    currentUser && navigate('/dashboard')  
-  })
-  
 
   const schema = yup.object().shape({
     email: yup
@@ -63,7 +57,7 @@ const SignIn = () => {
   return (
     <>
         <Header />
-        <section className="w-full min-h-[90vh] h-[600px] flex items-center justify-center">
+        <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
             <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col ${theme==='light'? 'bg-green-50': 'bg-[rgb(28,37,61)]'}`}>
               <img src={logo} className=" w-44 cursor-pointer " alt="logo" />
               <h2 className="text-sm"> &quot;Crafting Perspectives, Shaping Minds&quot; </h2>
@@ -83,7 +77,7 @@ const SignIn = () => {
                         onBlur={loginFormik.handleBlur}
                         onChange={loginFormik.handleChange} 
                       />
-                      {(loginFormik.touched.email && loginFormik.errors.email) && <p className='mt-1 text-xs text-red-500'>{loginFormik.errors.email}</p>}
+                      {(loginFormik.touched.email && loginFormik.errors.email) && <p className='mt-1 text-xs text-red-600'>{loginFormik.errors.email}</p>}
                     </div>
                     <div>
                       <div className="mb-2 block">
@@ -93,6 +87,7 @@ const SignIn = () => {
                         id="password"
                         name="password"
                         type="password"
+                        placeholder="password"
                         value={loginFormik.values.password} 
                         onBlur={loginFormik.handleBlur}
                         onChange={loginFormik.handleChange} 
