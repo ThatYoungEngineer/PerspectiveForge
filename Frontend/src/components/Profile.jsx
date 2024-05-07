@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Button, TextInput, Alert, Spinner } from "flowbite-react"
 import { MdModeEditOutline } from "react-icons/md"
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import * as yup from "yup"
 import { useFormik } from "formik"
 
@@ -25,59 +25,61 @@ const Profile = () => {
     const [imageFile, setImageFile] = useState(null)
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
     const [imageFileUploadError, setImageFileUploadError] = useState(null)
+    
+    const imageUploadSuccess = useRef(false);
+    console.log("imageUploadSuccess: ", imageUploadSuccess)
+
     const [imageFileURL, setImageFileURL] = useState(null)
     const [formSuccessMessage, setFormSuccessMessage] = useState(null)
     const [formErrorMessage, setFormErrorMessage] = useState(null)
     const filePickerRef = useRef()
-
-    console.log("imagefileURL: ", imageFileURL)
+    console.log("imageFileURL: ", imageFileURL)
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword)
     }
 
     const handleImageChange = (e) => {
+        imageUploadSuccess.current = false
         setImageFileUploadError(null)
         setImageFile(null)
         setImageFileURL(null)
-
         const file = e.target.files[0]
-
-        if (file.type.includes('image/')) {
-            if (file.size < 2097152) {        //  Greater than 2MB
-                setImageFile(file)
-                setImageFileURL(URL.createObjectURL(file))
-            } else setImageFileUploadError('Failure. Image must be less than 2MB!')
-        } else setImageFileUploadError('Failure. File type must be an image!')
+        try{
+            if (file?.type.includes('image/')) {
+                if (file.size < 2097152) {        //  Greater than 2MB
+                    setImageFile(file)
+                    setImageFileURL(URL.createObjectURL(file))
+                    updateUserFormik.setFieldValue("profilePhoto", URL.createObjectURL(file))
+                    updateUserFormik.setFieldTouched("profilePhoto", true, true);
+                } else setImageFileUploadError('Failure. Image must be less than 2MB!')
+            } else setImageFileUploadError('Failure. File type must be an image!')
+        } catch(e){
+            return
+        }
     }
 
 
     const uploadImage = async () => {
+        imageUploadSuccess.current = false
         setImageFileUploadError(null)
         const storage = getStorage(app)
         const fileName = new Date().getTime() + imageFile.name
         const storageRef = ref(storage, fileName)
         const uploadTask = uploadBytesResumable(storageRef, imageFile)
-        console.log("UploadTask", uploadTask)
 
-        uploadTask.on('state_changed', (snapshot) => {
+         uploadTask.on('state_changed', (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             setImageUploadingProgress(progress.toFixed(0))
-        }, (err) => {
+        }, () => {
             setImageFileUploadError("Could not upload image. Please try again!")
         }, () => {
             getDownloadURL(uploadTask.snapshot.ref).then((url) => {
                 setImageFileURL(url)
+                imageUploadSuccess.current = true
             })
         })
     }
-
-    useEffect(() => {
-      if (imageFile) {
-        uploadImage()
-      }
-    }, [imageFile])
-    
 
     const schema = yup.object().shape({
         profilePhoto: yup
@@ -100,7 +102,7 @@ const Profile = () => {
         initialValues: {
           full_name: currentUser.userData.full_name,
           email: currentUser.userData.email,
-          profilePhoto: currentUser.userData.profilePhoto,
+          profilePhoto: "",
           password: "",
           confirmPassword: "",
         },
@@ -108,25 +110,27 @@ const Profile = () => {
         onSubmit: async (values, { resetForm } ) => {
             const userData = {
                 id: currentUser.userData._id,
-                profilePhoto: imageFileURL ?? currentUser.userData.profilePhoto,
+                profilePhoto: imageFileURL,   //req image
                 full_name: values.full_name,
                 password: values.password,
             }
             try{
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
-                dispatch(updateUser(userData))
-                .then((data) => {
-                    console.log('data hai ye: ', data)
-                    if (data.error?.message) {
-                        console.log('data hai ye bsdwala: ', data)
-                        setFormErrorMessage(data.error.message)
-                    } else {
-                        console.log('data hai ye bsdwala: ', data)
-                        setFormSuccessMessage(data.payload.message)
-                        resetForm()
-                    }    
-                })
+                await uploadImage().then(() => {
+
+                if (imageUploadSuccess.current) {
+                    dispatch(updateUser(userData))
+                    .then((data) => {
+                        if (data.error?.message) {
+                            setFormErrorMessage(data.error.message)
+                        } else {
+                            setFormSuccessMessage(data.payload.message)
+                            resetForm()
+                        }    
+                    })
+                }
+            })
             } catch (error) {
                 setFormErrorMessage(error)
                 setFormSuccessMessage("")         
@@ -140,23 +144,18 @@ const Profile = () => {
         <h2 className="text-4xl font-semibold"> Profile </h2>
 
         <form onSubmit={updateUserFormik.handleSubmit} className="w-full flex gap-5 flex-col items-center justify-center">
-            
-            {console.log("iiner consoe: ", updateUserFormik.values.profilePhoto)}
-
+    
             <input 
+                name="profilePhoto" 
                 type="file" accept="image/*"
                 multiple={false} ref={filePickerRef}
-                onChange={handleImageChange} 
+                onChange={handleImageChange}  
             />
             <picture className="w-44 h-44 rounded-full border-4 border-teal-500 relative" >
                 <img
-                    name="profilePhoto" 
-                    // src={imageFileURL || currentUser.userData.profilePhoto}
-                    src={imageFileURL || updateUserFormik.values.profilePhoto}
+                    src={imageFileURL ?? currentUser.userData.profilePhoto}
                     alt="profile_picture"
                     className={`w-full h-full object-cover rounded-full ${imageUploadingProgress && imageUploadingProgress < 100 && 'opacity-40 cursor-not-allowed '} transition ease-in-out duration-200 `} 
-                    // value={updateUserFormik.values.profilePhoto}
-                    onChange={updateUserFormik.handleChange}
                 />
                 <MdModeEditOutline className="absolute -bottom-1 -right-5 hover:bg-[#ececec62] rounded-full w-9 h-9 p-2 transition ease-in-out duration-200 cursor-pointer" onClick={ () => filePickerRef.current.click() } />
             </picture>
