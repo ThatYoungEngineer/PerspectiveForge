@@ -26,14 +26,13 @@ const Profile = () => {
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
     const [imageFileUploadError, setImageFileUploadError] = useState(null)
     
-    const imageUploadSuccess = useRef(false);
+    const imageUploadSuccess = useRef(false)
     console.log("imageUploadSuccess: ", imageUploadSuccess)
 
     const [imageFileURL, setImageFileURL] = useState(null)
     const [formSuccessMessage, setFormSuccessMessage] = useState(null)
     const [formErrorMessage, setFormErrorMessage] = useState(null)
     const filePickerRef = useRef()
-    console.log("imageFileURL: ", imageFileURL)
 
     const toggleShowPassword = () => {
         setShowPassword(!showPassword)
@@ -61,25 +60,37 @@ const Profile = () => {
 
 
     const uploadImage = async () => {
-        imageUploadSuccess.current = false
-        setImageFileUploadError(null)
-        const storage = getStorage(app)
-        const fileName = new Date().getTime() + imageFile.name
-        const storageRef = ref(storage, fileName)
-        const uploadTask = uploadBytesResumable(storageRef, imageFile)
-
-         uploadTask.on('state_changed', (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            setImageUploadingProgress(progress.toFixed(0))
-        }, () => {
-            setImageFileUploadError("Could not upload image. Please try again!")
-        }, () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                setImageFileURL(url)
-                imageUploadSuccess.current = true
-            })
-        })
-    }
+        imageUploadSuccess.current = false;
+        setImageFileUploadError(null);
+        const storage = getStorage(app);
+        const fileName = new Date().getTime() + imageFile.name;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    
+        const uploadPromise = new Promise((resolve, reject) => {
+            uploadTask.on('state_changed', (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setImageUploadingProgress(progress.toFixed(0));
+            }, () => {
+                setImageFileUploadError("Could not upload image. Please try again!");
+                reject("Upload failed");
+            }, () => {
+                getDownloadURL(uploadTask.snapshot.ref)
+                    .then((url) => {
+                        setImageFileURL(url);
+                        imageUploadSuccess.current = true;
+                        resolve();
+                    })
+                    .catch((error) => {
+                        setImageFileUploadError("Could not retrieve download URL.");
+                        reject(error);
+                    });
+            });
+        });
+    
+        return uploadPromise;
+    };
+    
 
     const schema = yup.object().shape({
         profilePhoto: yup
@@ -117,7 +128,7 @@ const Profile = () => {
             try{
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
-                await uploadImage().then(() => {
+                await uploadImage()
 
                 if (imageUploadSuccess.current) {
                     dispatch(updateUser(userData))
@@ -130,7 +141,7 @@ const Profile = () => {
                         }    
                     })
                 }
-            })
+            
             } catch (error) {
                 setFormErrorMessage(error)
                 setFormSuccessMessage("")         
