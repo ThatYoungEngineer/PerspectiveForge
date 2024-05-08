@@ -46,7 +46,7 @@ export const login = async (req, res) => {
 
         const decryptPassword = bcryptjs.compareSync(password, existingUser.password)
         if (!decryptPassword) {
-            return res.status(404).json({ message: "Invalid Credentials! Please try again" });
+            return res.status(401).json({ message: "Invalid Credentials! Please try again" });
         }
 
         else {
