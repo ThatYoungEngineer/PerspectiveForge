@@ -29,7 +29,7 @@ const Header = () => {
             <Navbar.Brand onClick={() => navigate('/')} >
                 <img src={logo} className=" w-44 cursor-pointer" alt="logo" />
             </Navbar.Brand>
-            <div className="flex gap-2 md:order-2 items-center justify-center">
+            <div className="flex gap-2 md:order-2 items-center justify-center ">
                 <Button
                     className='w-12 h-10 hidden sm:flex items-center justify-center'
                     color='gray'
@@ -40,29 +40,28 @@ const Header = () => {
                 </Button>
 
                 {currentUser?.userData 
-                ? <Dropdown
-                    inline
-                    className="w-40"                
-                    arrowIcon={false}
-                    label = {
-                        <Avatar 
-                            alt="user"
-                            img={currentUser.userData.profilePhoto} 
-                            size='md'
-                            rounded
-                        />
-                    }
-                >
-                    <Dropdown.Header>
-                        <span className="block text-sm">{currentUser.userData.full_name}</span>
-                        <span className="block text-sm font-medium truncate">{currentUser.userData.email}</span>
-                    </Dropdown.Header>
-                    <Link to={'/dashboard?tab=profile'}>
-                        <Dropdown.Item>Profile</Dropdown.Item>
-                    </Link>
+                ?   <Dropdown
+                        inline
+                        arrowIcon={false}
+                        label = {
+                            <Avatar 
+                                alt="user"
+                                img={currentUser.userData.profilePhoto}
+                                size='md'
+                                rounded
+                            />
+                        }
+                    >
+                        <Dropdown.Header>
+                            <span className="block text-sm">{currentUser.userData.full_name}</span>
+                            <span className="block text-sm font-medium truncate">{currentUser.userData.email}</span>
+                        </Dropdown.Header>
+                        <Link to={'/dashboard?tab=profile'}>
+                            <Dropdown.Item>Profile</Dropdown.Item>
+                        </Link>
                         <Dropdown.Divider />
                         <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>Sign Out</Dropdown.Item>
-                </Dropdown>
+                    </Dropdown>
                 :   <Link to={'/login'} >
                         <Button outline gradientDuoTone="purpleToBlue">
                             Login
@@ -71,7 +70,6 @@ const Header = () => {
                 }
                 <Navbar.Toggle />
             </div>
-            
             <Navbar.Collapse>
                 <div className="w-full sm:hidden flex items-center justify-center">
                     <Button

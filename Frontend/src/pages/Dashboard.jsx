@@ -19,18 +19,18 @@ const Dashboard = () => {
   }, [location.search])
   
   return (
-    <div className="w-scren h-full flex justify-between flex-col">
+    <>
       <Header />
-      <div className="w-full min-h-screen flex">
-        <aside>
-          <Sidebar />
-        </aside>
-        <section className="w-full">
-          {tab === 'profile' && <Profile /> }
-        </section>
-      </div>
-      <Footer />
-    </div>
+        <div className="w-full min-h-screen flex">
+          <aside className="hidden md:block" >
+            <Sidebar />
+          </aside>
+          <section className="w-full">
+            {tab === 'profile' && <Profile /> }
+          </section>
+        </div>
+        <Footer />
+    </>
   )
 }
 

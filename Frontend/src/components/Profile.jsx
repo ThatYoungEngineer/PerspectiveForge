@@ -1,25 +1,20 @@
 import { useState, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Button, TextInput, Alert, Spinner, Modal } from "flowbite-react"
+import { Button, TextInput, Alert, Spinner } from "flowbite-react"
 
 import { MdModeEditOutline } from "react-icons/md"
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
-import { HiOutlineExclamationCircle } from "react-icons/hi"
+import { HiInformationCircle } from "react-icons/hi"
+import { IoTrashSharp } from "react-icons/io5"
 
 import * as yup from "yup"
 import { useFormik } from "formik"
 
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MUIbtn from '@mui/material/Button'
-import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-import MUIModal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
-
 
 import {
     getDownloadURL,
@@ -29,23 +24,7 @@ import {
 } from 'firebase/storage'
 
 import { app } from '../utils/firebase.js'
-import { updateUser } from "../store/userSlice.js"
-
-import Swal from 'sweetalert2'
-
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-  
+import { updateUser, deleteUser } from "../store/userSlice.js"
 
 const Profile = () => {
 
@@ -60,25 +39,12 @@ const Profile = () => {
     const [formSuccessMessage, setFormSuccessMessage] = useState(null)
     const [formErrorMessage, setFormErrorMessage] = useState(null)
     const [deleteAccountEmail, setDeleteAccountEmail] = useState(null)
-    const [openModal, setOpenModal] = useState(false)
-    const [open, setOpen] = useState(false)
+    const [deleteAccountPopup, setDeleteAccountPopup] = useState(false)
 
     const filePickerRef = useRef()
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-  
-    const handleSwalOpen = () => {
-        Swal.fire({
-            title: "Good job!",
-            text: "You clicked the button!",
-            icon: "success"
-          });
-    }
-
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword)
-    }
+    const toggleShowPassword = () => setShowPassword(!showPassword)
+    const handleDeleteAccountEmail = (e) => setDeleteAccountEmail(e.target.value)
 
     const handleImageChange = (e) => {
         setImageFileUploadError(null)
@@ -87,16 +53,14 @@ const Profile = () => {
         const file = e.target.files[0]
         try{
             if (file?.type.includes('image/')) {
-                if (file.size < 2097152) {                      //  Greater than 2MB
+                if (file.size < 2097152) {              //  Greater than 2MB
                     setImageFile(file)
                     setImageFileURL(URL.createObjectURL(file))
                     updateUserFormik.setFieldValue("profilePhoto", URL.createObjectURL(file))
                     updateUserFormik.setFieldTouched("profilePhoto", true, true);
                 } else setImageFileUploadError('Failure. Image must be less than 2MB!')
             } else setImageFileUploadError('Failure. File type must be an image!')
-        } catch(e){
-            return
-        }   
+        } catch(e) {return}
     }
 
     const uploadImage = async () => {
@@ -118,7 +82,6 @@ const Profile = () => {
                 },
                 async () => {
                     try {
-                        // Get the download URL
                         const url = await getDownloadURL(uploadTask.snapshot.ref);
                         setImageFileURL(url)
                         resolve(url)
@@ -163,26 +126,23 @@ const Profile = () => {
             try {
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
-            
                 let userData = {
                     id: currentUser.userData._id,
                     ...(values.full_name && { full_name: values.full_name }),
                     ...(values.password && { password: values.password }),
                 }
-            
                 if (imageFile) {
                     const firebaseUpload = await uploadImage();
                     if (firebaseUpload) {
                         userData = {
                             ...userData,
-                            profilePhoto: firebaseUpload,
-                        };
-                        setImageFile(null);
+                            profilePhoto: firebaseUpload
+                        }
+                        setImageFile(null)
                     } else {
                         throw new Error("Image upload failed!")
                     }
                 }
-            
                 const data = await dispatch(updateUser(userData));
                 if (data.error?.message) {
                     setFormErrorMessage(data.error.message);
@@ -190,48 +150,47 @@ const Profile = () => {
                     setFormSuccessMessage(data.payload.message);
                     resetForm()
                 }
-            } catch (error) {
-                setFormErrorMessage("Failed! An error occurred, please try again");
-            }            
+            } catch (error) { setFormErrorMessage("Failed! An error occurred, please try again") }            
         }
     })
 
-    const handleDeleteAccountEmail = (e) => {
-        setDeleteAccountEmail(e.target.value);
+    const handleDeleteUserAccount = async () => {
+        const userId = currentUser.userData._id 
+        dispatch(deleteUser(userId))
     }
 
   return (
     <>
-        <MUIModal
-            aria-labelledby="transition-modal-title"
-            aria-describedby="transition-modal-description"
-            open={open}
-            onClose={handleClose}
-            closeAfterTransition
-            slots={{ backdrop: Backdrop }}
-            slotProps={{
-                backdrop: {
-                    timeout: 500,
-                },
-            }}
-        >
-            <Fade in={open}>
-                <Box sx={style}>
-                    <Typography id="transition-modal-title" variant="h6" component="h2">
-                    Text in a modal
-                    </Typography>
-                    <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-                    Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
-                </Box>
-            </Fade>
-        </MUIModal>
-
-
-        <div className='w-full h-full p-20 flex flex-col gap-10 items-center justify-center'>
+        {deleteAccountPopup &&
+            <section className="w-screen h-screen max-h-screen bg-black bg-opacity-65 fixed top-0 left-0 z-50 FlexCenter " >
+                <article className="w-[90vw] xl:w-[40vw] 2xl:w-[30vw] bg-[#262630] p-10 z-40 flex flex-col gap-3">
+                    <h3 className="text-base text-[#FF4040] font-medium" >Are you sure, You want to delete your account?</h3>
+                    <Alert color="warning" icon={HiInformationCircle}>
+                        <span className="font-medium">Note!</span> This change is irrevesible.
+                    </Alert>
+                    <div className="w-full flex items-center gap-[5%] mt-10">
+                        <MUIbtn
+                            variant="contained" color="error" type="button"
+                            disabled={ deleteAccountEmail !== currentUser.userData.email}
+                            onClick={handleDeleteUserAccount}
+                            className="flex items-center justify-center gap-1"
+                        >
+                            { status === 'loading' ? <Spinner aria-label="Default status example" /> : <> CONFIRM <IoTrashSharp size={15} /> </> }
+                        </MUIbtn>
+                        <MUIbtn
+                            variant="contained" type="button" color="primary"
+                            onClick={() => setDeleteAccountPopup(false)}
+                        >
+                            Cancel
+                        </MUIbtn>
+                    </div>
+                </article>
+            </section> 
+        }
+        <div className='w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10'>
             <h2 className="text-4xl font-semibold"> Profile </h2>
 
-            <form onSubmit={updateUserFormik.handleSubmit} className="w-full flex gap-5 flex-col items-center justify-center">
+            <form onSubmit={updateUserFormik.handleSubmit} className="w-[80vw] md:w-full h-full flex gap-5 flex-col items-center justify-center ">
         
                 <input 
                     name="profilePhoto" 
@@ -257,38 +216,37 @@ const Profile = () => {
                             <p className="text-red-600">{imageFileUploadError}</p>
                         </Alert> 
                     }
-                <div>
+                <div className="w-full md:w-fit" >
                     <label htmlFor="full_name" className="text-sm"> Full Name </label>
                     <TextInput
                         id="full_name"
                         name="full_name"
                         type="text"
-                        className="w-[30rem]"
+                        className=" w-full md:w-[30rem]"
                         defaultValue={currentUser.userData.full_name}
-                        // value={updateUserFormik.values.full_name} 
                         onBlur={updateUserFormik.handleBlur}
                         onChange={updateUserFormik.handleChange} 
                     />
                     {(updateUserFormik.touched.full_name && updateUserFormik.errors.full_name) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.full_name}</p>}
                 </div>
-                <div>
+                <div className="w-full md:w-fit">
                     <label htmlFor="email" className="text-sm"> Email </label>
                     <TextInput
                         value={currentUser.userData.email}
                         id="email"
                         type="text"
-                        className="w-[30rem]"
+                        className=" w-full md:w-[30rem]"
                         readOnly
                     />
                 </div>
-                <div>
+                <div className="w-full md:w-fit">
                     <label htmlFor="password" className="text-sm"> New Password </label>
                     <div className="relative">
                         <TextInput
                             id="password"
                             name="password"
                             type={showPassword ? "text" : "password"}
-                            className="w-[30rem]"
+                            className=" w-full md:w-[30rem]"
                             placeholder="Enter New Password"
                             value={updateUserFormik.values.password} 
                             onBlur={updateUserFormik.handleBlur}
@@ -302,13 +260,13 @@ const Profile = () => {
                     </div>
                         {(updateUserFormik.touched.password && updateUserFormik.errors.password) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.password}</p>}
                 </div>
-                <div>
+                <div className="w-full md:w-fit">
                     <label htmlFor="confirmPassword" className="text-sm"> Confirm New Password </label>
                     <TextInput
                         id="confirmPassword"
                         name="confirmPassword"
                         type="password"
-                        className="w-[30rem]"
+                        className=" w-full md:w-[30rem]"
                         placeholder="Enter Confirm Password"
                         value={updateUserFormik.values.confirmPassword} 
                         onBlur={updateUserFormik.handleBlur}
@@ -316,45 +274,31 @@ const Profile = () => {
 
                     />
                     {(updateUserFormik.touched.confirmPassword && updateUserFormik.errors.confirmPassword) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.confirmPassword}</p>}
-
                 </div>
-                <Button type="submit" className="w-[30rem] mt-5" outline gradientDuoTone="pinkToOrange" 
+                <Button type="submit" className="w-full md:w-[30rem] mt-5" outline gradientDuoTone="pinkToOrange" 
                     disabled={
                         updateUserFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
                         !updateUserFormik.isValid ||                                // Disable when form is invalid
                         !updateUserFormik.dirty                                     // Disable when form has no changes
                     }
-                >
+                    >
                     {status === 'loading' || updateUserFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Save Changes" }    
                 </Button>
-
-                {formSuccessMessage && 
-                    <Alert color="success">
-                        <p>{formSuccessMessage}</p>
-                    </Alert >
-                }
-                {formErrorMessage && 
-                    <Alert color="failure">
-                        <p>{formErrorMessage}</p>
-                    </Alert>
-                }
-
-                {/* <section className="w-40 h-20" id="operator" >
-                    <h2>operator</h2>
-                </section> */}
-
-                <Accordion className="w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem' }} >
+                {formSuccessMessage && <Alert color="success"> <p>{formSuccessMessage}</p> </Alert > }
+                {formErrorMessage && <Alert color="failure"> <p>{formErrorMessage}</p> </Alert> }
+                <Accordion className="md:w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon  style={{ color: "rgb(182, 28, 28)" }} />}
                         aria-controls="panel2-content"
                         id="panel2-header"
+                        style={{borderRadius: '.4rem'}}
                     >
-                        <Typography style={{color: 'rgb(182, 28, 28)'}} > Delete Account? </Typography>
+                        <h3 style={{ fontSize: '14px', color: 'rgb(182, 28, 28)'}} > Delete Account? </h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography>
+                        <h3 style={{ fontSize: '14px' }}>
                             Type your email address below, to delete your account. <br />
-                        </Typography>
+                        </h3>
                         <span className="mt-5 w-full flex justify-between items-center flex-row gap-[5%]" >
                             <TextInput
                                 type="email" className="w-[70%]"
@@ -365,42 +309,11 @@ const Profile = () => {
                             <MUIbtn
                                 variant="contained" color="error" type="button"
                                 disabled={ deleteAccountEmail !== currentUser.userData.email} className="w-[25%]"
-                                onClick={handleSwalOpen}
+                                onClick={()=>setDeleteAccountPopup(true)} 
                             >
                                 Delete
                             </MUIbtn>
                         </span>
-
-                        {openModal && 
-                            <section >
-                                <Modal show={"on"} size="md" onClose={() => setOpenModal(false)} popup
-                                    base={"fixed w-screen left-0 top-0 z-50 h-[100vh] max-h-[100vh] overflow-hidden overflow-y-hidden"}
-                                    style={{
-                                        background: "red", position: "absolute", top: "0", left: "0",
-                                        overflowY: 'hidden', height: '100vh', maxHeight: '100vh'
-                                    }}
-                                >
-                                    <Modal.Header />
-                                    <Modal.Body >
-                                        <div className="text-center" >
-                                            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
-                                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">                                           
-                                                Are you sure you want to delete this product?
-                                            </h3>
-                                                Are you sure you want to delete this product? <br />
-                                            <div className="flex justify-center gap-4">
-                                                <Button color="failure" onClick={() => setOpenModal(false)}>
-                                                    {"Yes, I'm sure"}
-                                                </Button>
-                                                <Button color="gray" onClick={() => setOpenModal(false)}>
-                                                    No, cancel
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </Modal.Body>
-                                </Modal>
-                            </section>
-                        }
                     </AccordionDetails>
                 </Accordion>
             </form>

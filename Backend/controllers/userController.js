@@ -93,13 +93,44 @@ export const googleAuth = async (req, res) => {
             .save().then(() => {
                 res.status(201).json({ message: 'Signed Up successfully' });
             })
+            const token = jwt.sign( {id: user._id}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+            res
+            .status(200)
+            .cookie("jwt", token, {httpOnly: true})
+            .json({ userData, message: "Signed In successfully" });
         } catch (err) {
             res.status(500).json({ message: "Internal Server Error" });
         }
-
     }
-
 }
+
+// export const googleAuth = async (req, res) => {
+//     try {
+//         const { displayName, email, photoUrl } = req.body;
+//         let user = await User.findOne({ email });
+
+//         if (!user) {
+//             const generatePassword = Math.random().toString(36).slice(-8);
+//             const hashPassword = bcryptjs.hashSync(generatePassword, 10);
+//             user = new User({
+//                 full_name: displayName,
+//                 email,
+//                 password: hashPassword,
+//                 profilePhoto: photoUrl
+//             });
+//             await user.save();
+//             res.status(201).json({ message: 'Signed Up successfully' });
+//         }
+
+//         const { password, ...userData } = user._doc;
+//         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // One-time session
+//         res.cookie("jwt", token, { httpOnly: true }).status(200).json({ userData, message: "Signed In successfully" });
+//     } catch (error) {
+//         console.error("Error in googleAuth:", error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// }
+
 
 export const logout = (req, res) => {
     res.clearCookie("jwt", { path: "/" })
@@ -109,11 +140,11 @@ export const logout = (req, res) => {
 export const verifyToken = async (req, res, next) => {
     const token = req.cookies.jwt
     if (!token) {
-        return res.status(401).json({ message: "Not Authorized" });
+        return res.status(401).json({ message: "Not Authorized. No Token Found!" });
     }
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
         if (err) {
-            return res.status(401).json({ message: "Not Authorized" });
+            return res.status(401).json({ message: "Not Authorized. Invalid Token!" });
         }
         req.user = user
         next()
@@ -153,7 +184,19 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 
+}
+
+export const deleteUser = async (req, res) => {
+    if (req.user.id !== req.params.userId) {
+        return res.status(403).json({message: "You are not allowed to delete this user!" })
     }
+    try {
+        await User.findByIdAndDelete(req.params.userId)
+        res.status(200).json({ message: "User deleted successfully!" })
+    } catch (e) {
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
 
     
 // if(!existingUser) {

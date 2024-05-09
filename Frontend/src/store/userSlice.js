@@ -122,6 +122,25 @@ export const signOut = createAsyncThunk(
     }
 )
 
+export const deleteUser = createAsyncThunk (
+    'user/delete/userId',
+    async (userId) => {
+        try {
+            const res = await fetch(`/api/user/delete/${userId}`, {
+                method: 'DELETE',
+                body: JSON.stringify(userId)
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.message)
+            } else {
+                const response = await res.json()
+                console.log("Deleted user respnse: ", response)
+            }
+        } catch (error) { throw new Error(error.message) }
+    }
+)
+
 const userSlice = createSlice({
     name : 'user',
     initialState,
@@ -189,6 +208,19 @@ const userSlice = createSlice({
             state.error = null
         })
         .addCase(signOut.rejected, (state, action) => {
+            state.status = 'error'
+            state.error = action.error.message
+        })
+        builder
+        .addCase(deleteUser.pending, (state) => {
+            state.status = 'loading'
+        })
+        .addCase(deleteUser.fulfilled, (state, action) => {
+            state.status = 'idle'
+            state.currentUser = null
+            state.error = null
+        })
+        .addCase(deleteUser.rejected, (state, action) => {
             state.status = 'error'
             state.error = action.error.message
         })
