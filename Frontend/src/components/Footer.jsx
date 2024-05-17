@@ -1,9 +1,13 @@
 import { Footer as Feet }  from 'flowbite-react';
 import { Link } from 'react-router-dom';
 import { BsFacebook, BsInstagram, BsTwitter, BsGithub, BsDribbble } from 'react-icons/bs';
-import logo from '../assets/images/PerspectiveForge.png';
+import logo from "../assets/images/PerspectiveForge.png"
+import logoLight from "../assets/images/PerspectiveForge-light.png"
+import { useSelector } from "react-redux"
 
 const Footer = () => {
+  const { theme } = useSelector(state=>state.theme)
+
   return (
     <Feet container className='border border-t-8 border-teal-500'>
       <div className='w-full max-w-7xl mx-auto'>
@@ -13,7 +17,10 @@ const Footer = () => {
               to='/'
               className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'
             >
-              <img src={logo} alt="logo" className='w-44' />
+              {theme === 'light' 
+                ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
+                : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
+              }
             </Link>
           </div>
           <div className='grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6'>

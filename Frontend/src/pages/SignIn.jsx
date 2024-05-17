@@ -2,9 +2,9 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import OAuth from "../components/OAuth"
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 import logo from "../assets/images/PerspectiveForge.png"
+import logoLight from "../assets/images/PerspectiveForge-light.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
 // import { FaGoogle } from "react-icons/fa"
 import { IoCloseCircleOutline } from "react-icons/io5"
@@ -59,7 +59,10 @@ const SignIn = () => {
         <Header />
         <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
             <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col ${theme==='light'? 'bg-green-50': 'bg-[rgb(28,37,61)]'}`}>
-              <img src={logo} className=" w-44 cursor-pointer " alt="logo" />
+              {theme === 'light' 
+                ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
+                : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
+              }
               <h2 className="text-sm"> &quot;Crafting Perspectives, Shaping Minds&quot; </h2>
             </div>
             <div className="w-full p-10 md:w-1/2 md:p-20 FlexCenter">

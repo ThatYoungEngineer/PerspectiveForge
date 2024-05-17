@@ -4,6 +4,7 @@ import { FaMoon, FaSun } from 'react-icons/fa'
 import { HiLogout } from "react-icons/hi"
 
 import logo from "../assets/images/PerspectiveForge.png"
+import logoLight from "../assets/images/PerspectiveForge-light.png"
 import { useSelector, useDispatch } from "react-redux"
 import { toggleTheme } from "../store/themeSlice"
 import { signOut } from "../store/userSlice"
@@ -27,7 +28,10 @@ const Header = () => {
     <>
         <Navbar fluid rounded border >
             <Navbar.Brand onClick={() => navigate('/')} >
-                <img src={logo} className=" w-44 cursor-pointer" alt="logo" />
+                {theme === 'light' 
+                    ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
+                    : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
+                }
             </Navbar.Brand>
             <div className="flex gap-2 md:order-2 items-center justify-center ">
                 <Button
