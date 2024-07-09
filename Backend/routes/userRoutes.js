@@ -1,5 +1,14 @@
 import express from "express";
-import {login, signup, googleAuth, updateUser, verifyToken, logout, deleteUser}  from "../controllers/userController.js";
+import { verifyToken } from "../middlewares/auth.js"
+import {
+    login,
+    signup,
+    googleAuth,
+    updateUser,
+    logout,
+    deleteUser,
+    checkUserAuth
+}  from "../controllers/userController.js"
 
 const router = express.Router();
 
@@ -9,5 +18,7 @@ router.post('/google', googleAuth)
 router.post('/logout', logout)
 router.put('/update/:userId', verifyToken, updateUser)
 router.delete('/delete/:userId', verifyToken, deleteUser)
+router.get('/checkUserAuth', checkUserAuth)
+
 
 export default router

@@ -137,20 +137,6 @@ export const logout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
 }
 
-export const verifyToken = async (req, res, next) => {
-    const token = req.cookies.jwt
-    if (!token) {
-        return res.status(401).json({ message: "Not Authorized. No Token Found!" });
-    }
-    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-        if (err) {
-            return res.status(401).json({ message: "Not Authorized. Invalid Token!" });
-        }
-        req.user = user
-        next()
-    })
-}
-
 export const updateUser = async (req, res) => {
     if (req.user.id !== req.params.userId) {
         return res.status(403).json({message: "You are not allowed to update this user" })
@@ -195,6 +181,15 @@ export const deleteUser = async (req, res) => {
         res.status(200).json({ message: "User deleted successfully!" })
     } catch (e) {
         res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const checkUserAuth = async (req, res) => {
+    const token = req.cookies.jwt
+    if (token) {
+        return res.status(200)
+    } else {
+        return res.status(401).json({ message: "Not Authorized. No Token Found!" });
     }
 }
 

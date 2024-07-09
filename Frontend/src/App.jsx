@@ -1,6 +1,6 @@
 import { useEffect } from "react"
-import { useDispatch } from "react-redux"
-import { signOut } from "./store/userSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { checkUserAuth } from "./store/userSlice"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import SignIn from "./pages/SignIn"
@@ -13,7 +13,22 @@ import PrivateRoutes from "./components/PrivateRoutes"
 
 const App = () => {
 
+  const { currentUser } = useSelector(state => state.user)
   const dispatch = useDispatch()
+
+  const getPersistedData = async () => {
+    try {
+      if (currentUser !== null) {
+        dispatch(checkUserAuth())
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getPersistedData()
+  }, [])
   
   return (
     <>
@@ -35,5 +50,3 @@ const App = () => {
 }
 
 export default App
-
-// hello world

@@ -141,6 +141,25 @@ export const deleteUser = createAsyncThunk (
     }
 )
 
+export const checkUserAuth = createAsyncThunk(
+    'user/checkUserAuth',
+    async (_, { dispatch }) => {
+      try {
+        const response = await fetch('/api/user/checkUserAuth', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.status !== 200) {
+            await dispatch(signOut())
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+)
+
 const userSlice = createSlice({
     name : 'user',
     initialState,
