@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar"
 import Profile from "../components/Profile"
 import { useLocation } from "react-router"
 import { useState, useEffect } from "react"
+import CreatePost from "../components/CreatePost"
 
 const Dashboard = () => {
 
@@ -21,15 +22,16 @@ const Dashboard = () => {
   return (
     <>
       <Header />
-        <div className="w-full min-h-screen flex">
-          <aside className="hidden md:block" >
-            <Sidebar />
-          </aside>
-          <section className="w-full">
-            {tab === 'profile' && <Profile /> }
-          </section>
-        </div>
-        <Footer />
+      <div className="w-full min-h-screen flex">
+        <aside className="hidden md:block">
+          <Sidebar />
+        </aside>
+        <section className="w-full">
+          {tab === 'profile' && <Profile /> }
+          {tab === 'create-new-post' && <CreatePost /> }
+        </section>
+      </div>
+      <Footer />
     </>
   )
 }

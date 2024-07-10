@@ -29,8 +29,8 @@ const Header = () => {
         <Navbar fluid rounded border >
             <Navbar.Brand onClick={() => navigate('/')} >
                 {theme === 'light' 
-                    ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
-                    : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
+                    ? <img src={logo} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
+                    : <img src={logoLight} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
                 }
             </Navbar.Brand>
             <div className="flex gap-2 md:order-2 items-center justify-center ">

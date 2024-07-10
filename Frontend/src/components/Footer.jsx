@@ -18,8 +18,8 @@ const Footer = () => {
               className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'
             >
               {theme === 'light' 
-                ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
-                : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
+                ? <img src={logo} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
+                : <img src={logoLight} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
               }
             </Link>
           </div>

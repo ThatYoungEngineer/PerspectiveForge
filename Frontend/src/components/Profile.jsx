@@ -1,6 +1,8 @@
 import { useState, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Button, TextInput, Alert, Spinner } from "flowbite-react"
+import { Link } from "react-router-dom"
+
 
 import { MdModeEditOutline } from "react-icons/md"
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
@@ -188,7 +190,7 @@ const Profile = () => {
             </section> 
         }
         <div className='w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10'>
-            <h2 className="text-4xl font-semibold"> Profile </h2>
+            <h2 className="text-4xl font-semibold mb-10 md:mb-0"> Profile </h2>
 
             <form onSubmit={updateUserFormik.handleSubmit} className="w-[80vw] md:w-full h-full flex gap-5 flex-col items-center justify-center ">
         
@@ -286,6 +288,15 @@ const Profile = () => {
                 </Button>
                 {formSuccessMessage && <Alert color="success"> <p>{formSuccessMessage}</p> </Alert > }
                 {formErrorMessage && <Alert color="failure"> <p>{formErrorMessage}</p> </Alert> }
+                {
+                    currentUser.userData.isAdmin && (
+                        <Link to='/dashboard?tab=create-new-post'>
+                            <Button type="button" className="w-full md:w-[30rem]" gradientDuoTone='purpleToPink' >
+                                Create a post
+                            </Button>
+                        </Link>
+                    )
+                }
                 <Accordion className="md:w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon  style={{ color: "rgb(182, 28, 28)" }} />}

@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard'
 import About from "./pages/About"
 import AuthRoutes from "./components/AuthRoutes"
 import PrivateRoutes from "./components/PrivateRoutes"
+import AdminRoutes from "./components/AdminRoutes"
+import CreatePost from "./components/CreatePost"
 
 
 const App = () => {
@@ -42,6 +44,9 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route element={<PrivateRoutes />} >
           <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<AdminRoutes />}>
+          <Route path="/dashboard?tab=create-new-post" element={<CreatePost />} />
         </Route>
       </Routes>
       </BrowserRouter> 
