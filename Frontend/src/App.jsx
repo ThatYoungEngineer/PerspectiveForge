@@ -11,6 +11,7 @@ import AuthRoutes from "./components/AuthRoutes"
 import PrivateRoutes from "./components/PrivateRoutes"
 import AdminRoutes from "./components/AdminRoutes"
 import CreatePost from "./components/CreatePost"
+import RestoreScroll from "./components/RestoreScroll"
 
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
+      <RestoreScroll />
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route element={<AuthRoutes />} >

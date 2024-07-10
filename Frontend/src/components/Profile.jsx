@@ -190,9 +190,9 @@ const Profile = () => {
             </section> 
         }
         <div className='w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10'>
-            <h2 className="text-4xl font-semibold mb-10 md:mb-0"> Profile </h2>
+            <h2 className="text-4xl font-semibold md:mb-0"> Profile </h2>
 
-            <form onSubmit={updateUserFormik.handleSubmit} className="w-[80vw] md:w-full h-full flex gap-5 flex-col items-center justify-center ">
+            <form onSubmit={updateUserFormik.handleSubmit} className="w-[90vw] md:w-full h-full flex gap-5 flex-col items-center justify-center ">
         
                 <input 
                     name="profilePhoto" 
@@ -290,7 +290,7 @@ const Profile = () => {
                 {formErrorMessage && <Alert color="failure"> <p>{formErrorMessage}</p> </Alert> }
                 {
                     currentUser.userData.isAdmin && (
-                        <Link to='/dashboard?tab=create-new-post'>
+                        <Link to='/dashboard?tab=create-new-post' className="w-full md:w-fit">
                             <Button type="button" className="w-full md:w-[30rem]" gradientDuoTone='purpleToPink' >
                                 Create a post
                             </Button>

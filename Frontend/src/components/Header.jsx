@@ -77,7 +77,7 @@ const Header = () => {
             <Navbar.Collapse>
                 <div className="w-full sm:hidden flex items-center justify-center">
                     <Button
-                        className='w-12 h-10 flex items-center justify-center'
+                        className='w-12 h-10 flex items-center justify-center mb-5'
                         color='gray'
                         pill
                         onClick={handleThemeChange}
@@ -85,11 +85,23 @@ const Header = () => {
                         { theme === 'light' ? <FaMoon /> : <FaSun /> }
                     </Button>
                 </div>
-                <Link to={'/'}> Home </Link>
-                <Link to={'/'}> About </Link>
-                <Link to={'/'}> Services </Link>
-                <Link to={'/'}> Pricing </Link>
-                <Link to={'/'}> Contact </Link>
+                <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-5">
+                    <Link to={'/'}> Home </Link>
+                    <Link to={'/'}> About </Link>
+                    <Link to={'/'}> Services </Link>
+                    <Link to={'/'}> Pricing </Link>
+                    <Link to={'/'}> Contact </Link>
+                </div>
+                <div className="mt-5 w-full sm:hidden flex items-center justify-center">
+                <Button
+                    outline
+                    gradientDuoTone='purpleToPink'
+                    onClick={handleSignOut}
+                    className="mb-5"    
+                >
+                    Sign Out
+                </Button>
+                </div>
             </Navbar.Collapse>
         </Navbar>    
     </>

@@ -10,12 +10,13 @@ const options = [
     { key: 'mongodb', value: 'MongoDB' }, { key: 'php', value: 'PHP' },
     { key: 'laravel', value: 'Laravel' }, { key: 'mysql', value: 'My SQL' },
     { key: 'ml', value: 'Machine Learning' }
-];
+]
+
 const CreatePost = () => {
   return (
-    <div className="p-3 w-full min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-center text-4xl my-7 font-semibold">Create Post.</h1>
-        <form action="" className="w-full max-w-3xl flex flex-col gap-5">
+    <div className=" w-full h-fit flex flex-col gap-10 items-center xl:p-20 py-10">
+        <h1 className="text-center text-4xl font-semibold">Create Post.</h1>
+        <form action="" className="w-[90vw] md:w-full max-w-3xl flex flex-col gap-5">
             <div className="flex flex-col md:flex-row gap-4">
                 <TextInput type="text" id="title" className="flex-1" placeholder="Title" required  />
                 <Select style={{cursor: 'pointer'}}>
@@ -23,7 +24,6 @@ const CreatePost = () => {
                         <option 
                             key={index} 
                             value={option.value} 
-                            // disabled={option.disabled} 
                             hidden={option.hidden} 
                             defaultChecked={option.selected}
                         >
@@ -41,9 +41,9 @@ const CreatePost = () => {
             <ReactQuill 
                 theme="snow"
                 placeholder="Write post description.."
-                className="h-72 mb-12" 
+                className="h-72" 
             />
-            <Button type="submit" gradientDuoTone='purpleToPink'>Publish</Button>
+            <Button type="submit" gradientDuoTone='purpleToPink' className="mt-20 md:mt-12">Publish</Button>
         </form>
     </div>
   )
