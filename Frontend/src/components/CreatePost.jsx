@@ -14,7 +14,7 @@ const options = [
 const CreatePost = () => {
   return (
     <div className="p-3 w-full min-h-screen flex flex-col items-center justify-center">
-        <h1 className="text-center text-3xl my-7 font-semibold">Create Post.</h1>
+        <h1 className="text-center text-4xl my-7 font-semibold">Create Post.</h1>
         <form action="" className="w-full max-w-3xl flex flex-col gap-5">
             <div className="flex flex-col md:flex-row gap-4">
                 <TextInput type="text" id="title" className="flex-1" placeholder="Title" required  />

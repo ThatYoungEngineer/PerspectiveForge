@@ -9,10 +9,14 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 import { useDispatch } from'react-redux'
 import { oAuth } from '../store/userSlice.js'
  
-const OAuth = () => {
+  const OAuth = ({ btnStatus, btnStatusSU }) => {
     const dispatch = useDispatch()  
     const [successMessage, setSuccessMessage] = useState('') 
     const [errorMessage, setErrorMessage] = useState('') 
+
+      console.log('signIn: ', btnStatus)
+      console.log('signup: ', btnStatusSU)
+
 
     const handleGoogleClick = async () => {
         const auth = getAuth(app)
@@ -39,7 +43,7 @@ const OAuth = () => {
 
     return ( 
         <>
-            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} >
+            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} disabled={ btnStatus || btnStatusSU =="loading" } >
                 <AiFillGoogleCircle fontSize={20} className='mr-2' />
                 Continue with Google
             </Button>

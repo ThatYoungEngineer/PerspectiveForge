@@ -19,7 +19,7 @@ const SignIn = () => {
   const dispatch = useDispatch()
   const {theme} = useSelector(state=>state.theme)
   const [errorMessage , setErrorMessage] = useState(null)
-
+  const [googleBtnStatus , setGoogleBtnStatus] = useState(false)
 
   const schema = yup.object().shape({
     email: yup
@@ -46,8 +46,10 @@ const SignIn = () => {
       }
       try {
         setErrorMessage('')
+        setGoogleBtnStatus(true)
         await dispatch(signInUser(userData))
         .then((data) => data.error?.message && setErrorMessage(data.error.message))
+        setGoogleBtnStatus(false)
       } catch (error) {
         setErrorMessage(error)  
       }
@@ -109,7 +111,7 @@ const SignIn = () => {
                     >
                       {loginFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Sign In" }    
                     </Button>
-                    <OAuth />
+                    <OAuth btnStatus = {googleBtnStatus} />
                     <span className="text-sm">
                       Don&apos;t have an account? 
                       <Link to="/signup" className="ml-1 text-green-500">

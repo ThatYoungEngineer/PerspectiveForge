@@ -5,7 +5,6 @@ import { useState } from "react"
 import logo from "../assets/images/PerspectiveForge.png"
 import logoLight from "../assets/images/PerspectiveForge-light.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
-// import { FaGoogle } from "react-icons/fa"
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 import { Link } from "react-router-dom"
@@ -15,14 +14,13 @@ import { useDispatch, useSelector } from "react-redux"
 import { signUpUser } from "../store/userSlice"
 import OAuth from "../components/OAuth"
 
-const SignUp = () => {
-    
+
+const SignUp = () => {    
     const dispatch = useDispatch()
     const {status} = useSelector(state=>state.user) 
     const {theme} = useSelector(state=>state.theme) 
-    const [successMessage, setSuccessMessage] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-
+    const [successMessage, setSuccessMessage] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
 
     const schema = yup.object().shape({
         full_name: yup
@@ -62,7 +60,6 @@ const SignUp = () => {
                 setSuccessMessage("")
                 dispatch(signUpUser(userData))
                 .then((data) => {
-                    console.log(data)
                     if (data.error?.message) {
                         setErrorMessage(data.error.message)
                     } else {
@@ -104,7 +101,6 @@ const SignUp = () => {
                             onChange={signUpFormik.handleChange} 
                         />
                         {(signUpFormik.touched.full_name && signUpFormik.errors.full_name) && <p className='mt-1 text-xs text-red-600'>{signUpFormik.errors.full_name}</p>}
-
                     </div>
                     <div>
                         <div className="mb-2 block">
@@ -120,7 +116,6 @@ const SignUp = () => {
                             onChange={signUpFormik.handleChange} 
                         />
                         {(signUpFormik.touched.email && signUpFormik.errors.email) && <p className='mt-1 text-xs text-red-600'>{signUpFormik.errors.email}</p>}
-
                     </div>
                     <div>
                         <div className="mb-2 block">
@@ -136,21 +131,20 @@ const SignUp = () => {
                             onChange={signUpFormik.handleChange} 
                         />
                         {(signUpFormik.touched.password && signUpFormik.errors.password) && <p className='mt-1 text-xs text-red-600'>{signUpFormik.errors.password}</p>}
-
                     </div>
                     <Button
                         type="submit"
                         className="mt-2"
                         disabled={
-                            status === 'loading' || // Disable when submitting
+                            status === 'loading' ||     // Disable when submitting
                             !signUpFormik.isValid ||    // Disable when form is invalid
                             !signUpFormik.dirty ||      // Disable when form has no changes
-                            Object.values(signUpFormik.values).some(value => !value.trim()) // Disable when any field is empty
+                            Object.values(signUpFormik.values).some(value => !value.trim())     // Disable when any field is empty
                         }
                     >
                         {status === 'loading' ?  <Spinner aria-label="Default status example" /> : "Sign Up" }    
                     </Button>
-                    <OAuth />
+                    <OAuth btnStatusSU = {status} />
                     <span className="text-sm">
                         Have an account? 
                         <Link to="/login" className="ml-1 text-green-500">
@@ -168,6 +162,7 @@ const SignUp = () => {
                             {errorMessage}
                         </Alert>
                     )}
+
                 </form>
             </div>
         </section>
