@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isAdmin: {
+        type: Boolean,
+        default: false
+    },
     profilePhoto: {
         type: String,
         default: "https://firebasestorage.googleapis.com/v0/b/perspectiveforge-2843b.appspot.com/o/jin(dp).jpg?alt=media&token=900d5d4c-5298-4430-82ae-87f34d227d1e" 

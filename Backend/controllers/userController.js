@@ -51,7 +51,7 @@ export const login = async (req, res) => {
 
         else {
             const {password: pass, ...userData} = existingUser._doc
-            const token = jwt.sign( {id: existingUser._id}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+            const token = jwt.sign( { id: existingUser._id, isAdmin: existingUser.isAdmin }, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
             res
             .status(200)
             .cookie("jwt", token, {httpOnly: true})
