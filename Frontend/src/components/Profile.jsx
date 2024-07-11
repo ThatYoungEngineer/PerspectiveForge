@@ -8,6 +8,7 @@ import { MdModeEditOutline } from "react-icons/md"
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
 import { HiInformationCircle } from "react-icons/hi"
 import { IoTrashSharp } from "react-icons/io5"
+import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 
 import * as yup from "yup"
 import { useFormik } from "formik"
@@ -32,7 +33,7 @@ const Profile = () => {
 
     const dispatch = useDispatch()
     const { currentUser, status } = useSelector(state => state.user)
-
+    
     const [showPassword, setShowPassword] = useState(false)
     const [imageFile, setImageFile] = useState(null)
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
@@ -286,8 +287,8 @@ const Profile = () => {
                     >
                     {status === 'loading' || updateUserFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Save Changes" }    
                 </Button>
-                {formSuccessMessage && <Alert color="success"> <p>{formSuccessMessage}</p> </Alert > }
-                {formErrorMessage && <Alert color="failure"> <p>{formErrorMessage}</p> </Alert> }
+                {formSuccessMessage && <Alert color="success" icon={IoIosCheckmarkCircleOutline}> <p>{formSuccessMessage}</p> </Alert > }
+                {formErrorMessage && <Alert color="failure" icon={HiInformationCircle}> <p>{formErrorMessage}</p> </Alert> }
                 {
                     currentUser.userData.isAdmin && (
                         <Link to='/dashboard?tab=create-new-post' className="w-full md:w-fit">

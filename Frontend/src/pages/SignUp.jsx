@@ -21,6 +21,7 @@ const SignUp = () => {
     const {theme} = useSelector(state=>state.theme) 
     const [successMessage, setSuccessMessage] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
+    const [authBtnDisabled, setAuthBtnDisabled] = useState("")
 
     const schema = yup.object().shape({
         full_name: yup
@@ -73,6 +74,16 @@ const SignUp = () => {
             }
         }
     })
+
+    const getSignUpError = (error) => {
+        setErrorMessage(error)
+    }    
+    const getSignUpSuccess = (success) => {
+        setSuccessMessage(success)
+    }
+    const getAuthBtnDisabled = (disabled) => {
+        setAuthBtnDisabled(disabled)
+    }
 
   return (
     <>
@@ -139,12 +150,17 @@ const SignUp = () => {
                             status === 'loading' ||     // Disable when submitting
                             !signUpFormik.isValid ||    // Disable when form is invalid
                             !signUpFormik.dirty ||      // Disable when form has no changes
-                            Object.values(signUpFormik.values).some(value => !value.trim())     // Disable when any field is empty
+                            Object.values(signUpFormik.values).some(value => !value.trim()) ||    // Disable when any field is empty
+                            authBtnDisabled === 'disabled'
                         }
                     >
                         {status === 'loading' ?  <Spinner aria-label="Default status example" /> : "Sign Up" }    
                     </Button>
-                    <OAuth btnStatusSU = {status} />
+                    <OAuth
+                        getSignUpError = {getSignUpError}
+                        getSignUpSuccess = {getSignUpSuccess}
+                        getAuthBtnDisabled = {getAuthBtnDisabled}
+                    />
                     <span className="text-sm">
                         Have an account? 
                         <Link to="/login" className="ml-1 text-green-500">
@@ -152,7 +168,7 @@ const SignUp = () => {
                         </Link>
                     </span>
 
-                    {successMessage && (
+                    {successMessage  && (
                         <Alert color="success" icon={IoIosCheckmarkCircleOutline}>
                             {successMessage}
                         </Alert>

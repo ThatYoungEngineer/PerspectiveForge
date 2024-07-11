@@ -19,7 +19,7 @@ const SignIn = () => {
   const dispatch = useDispatch()
   const {theme} = useSelector(state=>state.theme)
   const [errorMessage , setErrorMessage] = useState(null)
-  const [googleBtnStatus , setGoogleBtnStatus] = useState(false)
+  const [authBtnDisabled, setAuthBtnDisabled] = useState("")
 
   const schema = yup.object().shape({
     email: yup
@@ -46,15 +46,25 @@ const SignIn = () => {
       }
       try {
         setErrorMessage('')
-        setGoogleBtnStatus(true)
         await dispatch(signInUser(userData))
         .then((data) => data.error?.message && setErrorMessage(data.error.message))
-        setGoogleBtnStatus(false)
       } catch (error) {
+        console.error("error: ", error)
         setErrorMessage(error)  
       }
     }
   })
+
+  const getSignUpError = (error) => {
+    setErrorMessage(error)
+  }    
+  const getSignUpSuccess = (success) => {
+  }
+
+  const getAuthBtnDisabled = (disabled) => {
+    setAuthBtnDisabled(disabled)
+  }
+
 
   return (
     <>
@@ -106,12 +116,17 @@ const SignIn = () => {
                         loginFormik.isSubmitting || // Disable when submitting
                         !loginFormik.isValid ||    // Disable when form is invalid
                         !loginFormik.dirty ||      // Disable when form has no changes
-                        Object.values(loginFormik.values).some(value => !value.trim()) // Disable when any field is empty
+                        Object.values(loginFormik.values).some(value => !value.trim()) ||    // Disable when any field is empty
+                        authBtnDisabled === 'disabled'
                       }
                     >
                       {loginFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Sign In" }    
                     </Button>
-                    <OAuth btnStatus = {googleBtnStatus} />
+                    <OAuth 
+                      getSignUpError = {getSignUpError}
+                      getSignUpSuccess = {getSignUpSuccess}
+                      getAuthBtnDisabled = {getAuthBtnDisabled}
+                    />
                     <span className="text-sm">
                       Don&apos;t have an account? 
                       <Link to="/signup" className="ml-1 text-green-500">

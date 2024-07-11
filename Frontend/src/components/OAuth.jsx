@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {app} from '../utils/firebase.js'
 import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth'
-import { Button, Alert } from "flowbite-react"
+import { Button, Alert, Spinner } from "flowbite-react"
 import { AiFillGoogleCircle } from 'react-icons/ai'
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io"
@@ -9,14 +9,11 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 import { useDispatch } from'react-redux'
 import { oAuth } from '../store/userSlice.js'
  
-  const OAuth = ({ btnStatus, btnStatusSU }) => {
+  const OAuth = (props) => {
     const dispatch = useDispatch()  
     const [successMessage, setSuccessMessage] = useState('') 
     const [errorMessage, setErrorMessage] = useState('') 
-
-      console.log('signIn: ', btnStatus)
-      console.log('signup: ', btnStatusSU)
-
+    const [btnDisable, setBtnDisable] = useState('')
 
     const handleGoogleClick = async () => {
         const auth = getAuth(app)
@@ -24,38 +21,59 @@ import { oAuth } from '../store/userSlice.js'
         provider.setCustomParameters({ prompt: 'select_account' })
     
         try {
-            setErrorMessage('')
-            setSuccessMessage('')
+            // setErrorMessage('')
+            // setSuccessMessage('')
+            props.getSignUpError("")
+            props.getSignUpSuccess("")
+            setBtnDisable('disabled')
+            props.getAuthBtnDisabled('disabled')
             const resultFromGoogle = await signInWithPopup(auth, provider)
             const userData = resultFromGoogle._tokenResponse
-            console.log(userData)
             dispatch(oAuth(userData))
             .then((data) => {
-                setSuccessMessage(data.payload.message) 
+                // setSuccessMessage(data.payload.message)
+                props.getSignUpSuccess(data.payload.message)
             })
             .catch((error) => {
-                setErrorMessage(error)
+                // setErrorMessage(error)
+                props.getSignUpError(error)
             })
+            setBtnDisable('')
         } catch (error) {
-            setErrorMessage('Error, Please check your internet connection and try again.')
+            console.error(error)
+            if (error.message.includes('popup-closed-by-user')) {
+                // setErrorMessage('Please try again!')
+                props.getSignUpError('Please try again!')
+            } else {
+                // setErrorMessage('Error! Please check your internet connection and try again.')
+                props.getSignUpError('Error! Please check your internet connection and try again.')
+            }
+            setBtnDisable('')
+            props.getAuthBtnDisabled('')
         }
     }
 
     return ( 
         <>
-            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} disabled={ btnStatus || btnStatusSU =="loading" } >
-                <AiFillGoogleCircle fontSize={20} className='mr-2' />
-                Continue with Google
+            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} disabled={ btnDisable === "disabled" } >
+                {btnDisable === "disabled" 
+                ? <Spinner />
+                : (
+                    <>
+                        <AiFillGoogleCircle size={20} className='mr-2' />
+                        Continue with Google    
+                    </>
+                )}
             </Button>
 
             {successMessage && (
-                <Alert color="success" icon={IoIosCheckmarkCircleOutline} className='mt-5'>
+                <Alert color="success" icon={IoIosCheckmarkCircleOutline} className=''>
                     {successMessage}
                 </Alert>
             )}
 
             {errorMessage && (
-                <Alert color="failure" icon={IoCloseCircleOutline} className='mt-5'>
+                <Alert color="failure" icon={IoCloseCircleOutline} className=''>
                     {errorMessage}
                 </Alert>
             )}
