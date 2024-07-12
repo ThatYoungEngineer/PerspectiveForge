@@ -33,7 +33,7 @@ const Profile = () => {
 
     const dispatch = useDispatch()
     const { currentUser, status } = useSelector(state => state.user)
-    
+
     const [showPassword, setShowPassword] = useState(false)
     const [imageFile, setImageFile] = useState(null)
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
@@ -66,43 +66,48 @@ const Profile = () => {
         } catch(e) {return}
     }
 
-    const uploadImage = async () => {
-        setImageFileUploadError(null);
-        const storage = getStorage(app);
-        const fileName = new Date().getTime() + imageFile?.name;
-        const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile);
-    
-        const uploadPromise = new Promise((resolve, reject) => {
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setImageUploadingProgress(progress.toFixed(0));
-                },
-                () => {
-                    setImageFileUploadError("Could not upload image. Please try again!");
-                    reject("Upload failed");
-                },
-                async () => {
-                    try {
-                        const url = await getDownloadURL(uploadTask.snapshot.ref);
-                        setImageFileURL(url)
-                        resolve(url)
-                    } catch (error) {
-                        setImageFileUploadError("Could not retrieve download URL.");
-                        reject(error)
-                    }
+const uploadImage = async () => {
+    if (!navigator.onLine) return
+
+    setImageFileUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + imageFile?.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+    const uploadPromise = new Promise((resolve, reject) => {
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setImageUploadingProgress(progress.toFixed(0));
+            },
+            (error) => {
+                setImageFileUploadError("Could not upload image. Please try again!");
+                reject(error);
+            },
+            async () => {
+                try {
+                    const url = await getDownloadURL(uploadTask.snapshot.ref);
+                    setImageFileURL(url);
+                    resolve(url);
+                } catch (error) {
+                    setImageFileUploadError("Could not retrieve download URL.");
+                    reject(error);
                 }
-            )
-        })
-        return uploadPromise
-    }
+            }
+        );
+    });
+
+    return await uploadPromise;
+}
     
     const schema = yup.object().shape({
         profilePhoto: yup
         .mixed(),
         full_name: yup
         .string()
+        .required("Name is required")
         .min(3, "Name must be at least 3 characters")
         .max(24, "Name is too long!")
         .trim(),
@@ -153,7 +158,9 @@ const Profile = () => {
                     setFormSuccessMessage(data.payload.message);
                     resetForm()
                 }
-            } catch (error) { setFormErrorMessage("Failed! An error occurred, please try again") }            
+            } catch (error) { 
+                setFormErrorMessage("Failed! Internet connection error, please try again.") 
+            }            
         }
     })
 

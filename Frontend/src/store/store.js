@@ -1,13 +1,15 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import userSlice from './userSlice'
 import themeSlice from './themeSlice'
+import postSlice from './postSlice'
 import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import { encryptTransform } from 'redux-persist-transform-encrypt';
 
 const rootReducer = combineReducers({
     user: userSlice, 
-    theme: themeSlice        
+    theme: themeSlice,        
+    post: postSlice
 })
 
 const encryption = encryptTransform({

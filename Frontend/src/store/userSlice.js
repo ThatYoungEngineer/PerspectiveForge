@@ -95,7 +95,7 @@ export const updateUser = createAsyncThunk(
                 return await res.json();
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw new Error('Network error. Please try again')
         }
     }
 )

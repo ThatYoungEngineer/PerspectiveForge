@@ -151,6 +151,8 @@ export const updateUser = async (req, res) => {
         if (req.body.full_name.length > 26 ) {
             return res.status(400).json({ message: "Name is too long" });
         }
+    } else {
+        return res.status(400).json({ message: "Name is required" });
     }
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.userId, {

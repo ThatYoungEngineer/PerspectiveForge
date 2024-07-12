@@ -41,13 +41,9 @@ import { oAuth } from '../store/userSlice.js'
             setBtnDisable('')
         } catch (error) {
             console.error(error)
-            if (error.message.includes('popup-closed-by-user')) {
-                // setErrorMessage('Please try again!')
-                props.getSignUpError('Please try again!')
-            } else {
-                // setErrorMessage('Error! Please check your internet connection and try again.')
-                props.getSignUpError('Error! Please check your internet connection and try again.')
-            }
+            if (error.message.includes('popup-closed-by-user')) props.getSignUpError('Error! Please try again.')
+            else if (error.message.includes('unauthorized-domain')) props.getSignUpError('Access denied! Please try again later.')
+            else props.getSignUpError('Error! Please check your internet connection and try again.')
             setBtnDisable('')
             props.getAuthBtnDisabled('')
         }
