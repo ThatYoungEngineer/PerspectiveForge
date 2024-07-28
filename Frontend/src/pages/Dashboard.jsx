@@ -1,7 +1,5 @@
-import Header from "../components/Header"
-import Footer from "../components/Footer"
 import Sidebar from "../components/Sidebar"
-import Profile from "../components/Profile"
+import MemoizedProfile from "../components/Profile"
 import { useLocation } from "react-router"
 import { useState, useEffect } from "react"
 import CreatePost from "../components/CreatePost"
@@ -21,17 +19,15 @@ const Dashboard = () => {
   
   return (
     <>
-      <Header />
       <div className="w-full min-h-screen flex">
         <aside className="hidden md:block">
           <Sidebar />
         </aside>
         <section className="w-full">
-          {tab === 'profile' && <Profile /> }
+          {tab === 'profile' && <MemoizedProfile /> }
           {tab === 'create-new-post' && <CreatePost /> }
         </section>
       </div>
-      <Footer />
     </>
   )
 }

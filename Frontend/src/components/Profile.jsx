@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, memo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Button, TextInput, Alert, Spinner } from "flowbite-react"
 import { Link } from "react-router-dom"
@@ -30,7 +30,6 @@ import { app } from '../utils/firebase.js'
 import { updateUser, deleteUser } from "../store/userSlice.js"
 
 const Profile = () => {
-
     const dispatch = useDispatch()
     const { currentUser, status } = useSelector(state => state.user)
 
@@ -341,4 +340,6 @@ const uploadImage = async () => {
   )
 }
 
-export default Profile
+const MemoizedProfile = memo(Profile)
+
+export default MemoizedProfile

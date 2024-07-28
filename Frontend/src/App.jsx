@@ -12,6 +12,8 @@ import PrivateRoutes from "./components/PrivateRoutes"
 import AdminRoutes from "./components/AdminRoutes"
 import CreatePost from "./components/CreatePost"
 import RestoreScroll from "./components/RestoreScroll"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
 
 
 const App = () => {
@@ -37,6 +39,7 @@ const App = () => {
     <>
       <BrowserRouter>
       <RestoreScroll />
+      <Header />
       <Routes>
         <Route path="/" exact element={<Home />} />
         <Route element={<AuthRoutes />} >
@@ -51,6 +54,7 @@ const App = () => {
           <Route path="/dashboard?tab=create-new-post" element={<CreatePost />} />
         </Route>
       </Routes>
+      <Footer />
       </BrowserRouter> 
     </>
   )

@@ -6,7 +6,7 @@ const initialState = {
     error : null,
 }
 
-const createPost = createAsyncThunk(
+export const createPost = createAsyncThunk(
     'post/create-new-post',
     async (data) => {
         try {

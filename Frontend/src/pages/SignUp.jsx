@@ -1,6 +1,3 @@
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-
 import { useState } from "react"
 import logo from "../assets/images/PerspectiveForge.png"
 import logoLight from "../assets/images/PerspectiveForge-light.png"
@@ -87,7 +84,6 @@ const SignUp = () => {
 
   return (
     <>
-        <Header />
         <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
             <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col ${theme==='light'? 'bg-green-50': 'bg-[rgb(28,37,61)]'}`}>
                 {theme === 'light' 
@@ -182,7 +178,6 @@ const SignUp = () => {
                 </form>
             </div>
         </section>
-        <Footer />
     </>
   )
 }

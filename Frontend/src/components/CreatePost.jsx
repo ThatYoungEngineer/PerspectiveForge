@@ -6,7 +6,9 @@ import { IoWarning } from 'react-icons/io5'
 
 import * as yup from "yup"
 import { useFormik } from "formik"
-import { useSelector } from 'react-redux'
+
+import { createPost } from '../store/postSlice.js'
+import { useDispatch, useSelector } from 'react-redux'
 
 const options = [
     { key: 'select', value: 'Select a category', disabled: true, hidden: true, selected: true },
@@ -18,15 +20,20 @@ const options = [
     { key: 'ml', value: 'Machine Learning' }, { key: 'cpp', value: 'C++' },
     { key: 'python', value: 'Python' }, { key: 'django', value: 'Django' },
     { key: 'aws', value: 'AWS' }, { key: 'nginx', value: 'Nginx' },
+    { key: 'ai', value: 'Artificial Intelligence' }, { key: 'non-tech', value: 'Non-Technical' },
 ]
 
 const CreatePost = () => {
-
+    const dispatch = useDispatch()
+    const { currentUser } = useSelector((state)=>state.user)
     const { status } = useSelector((state)=>state.post)
 
     const [ file, setFile ] = useState(null)
     const [ fileURL, setFileURL ] = useState(null)
     const [ fileError, setFileError ] = useState(null)
+
+    const [ error, setError ] = useState(null)
+    const [ success, setSuccess ] = useState(null)
         
     const handleFileChange = (event) => {
         setFileURL(null)
@@ -46,19 +53,18 @@ const CreatePost = () => {
     const schema = yup.object().shape({
         title: yup
         .string()
-        // .required("Title is required")
+        .required("Title is required")
         .min(2, "Title must be at least 2 characters")
         .max(24, "Title is too long!")
         .trim(),
         description: yup
         .string()
         .min(100, "Too short. Must be at least 100 characters")
-        // .required("Description is required")
+        .required("Description is required")
         .trim(),
         category: yup
         .string()
-        // .required("Category is required")
-        ,
+        .required("Category is required"),
     })
 
     const createPostFormik = useFormik({
@@ -70,35 +76,24 @@ const CreatePost = () => {
         },
         validationSchema: schema,
         onSubmit: async (values, { resetForm } ) => {
-            console.log('post form data: ', values)
-            // try {
-            //     setFormErrorMessage("")
-            //     setFormSuccessMessage("")
-            //     let userData = {
-            //         id: currentUser.userData._id,
-            //         ...(values.full_name && { full_name: values.full_name }),
-            //         ...(values.password && { password: values.password }),
-            //     }
-            //     if (imageFile) {
-            //         const firebaseUpload = await uploadImage();
-            //         if (firebaseUpload) {
-            //             userData = {
-            //                 ...userData,
-            //                 profilePhoto: firebaseUpload
-            //             }
-            //             setImageFile(null)
-            //         } else {
-            //             throw new Error("Image upload failed!")
-            //         }
-            //     }
-            //     const data = await dispatch(updateUser(userData));
-            //     if (data.error?.message) {
-            //         setFormErrorMessage(data.error.message);
-            //     } else {
-            //         setFormSuccessMessage(data.payload.message);
-            //         resetForm()
-            //     }
-            // } catch (error) { setFormErrorMessage("Failed! An error occurred, please try again") }            
+            console.log('submit')
+            try {
+                const data = {
+                    id: currentUser.userData.id,
+                    title: values.title,
+                    category: values.category,
+                    description: values.description,
+                }
+                dispatch(createPost(data))
+                .then((data) =>{
+                    console.log(data.payload)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+            } catch (error) {
+                console.log(error)
+            }            
         }
     })
 
@@ -149,7 +144,7 @@ const CreatePost = () => {
                 <ReactQuill 
                     name='description'
                     theme="snow"
-                    placeholder="Write post description.."
+                    placeholder="Write post description.. (Must be atleast 200 characters)"
                     className="h-80" 
                     value={createPostFormik.values.description}
                     onBlur={() => {
@@ -165,11 +160,11 @@ const CreatePost = () => {
                 type="submit"
                 gradientDuoTone='purpleToPink'
                 className="mt-[10vh] md:mt-[7vh]"
-                // disabled={
-                //     createPostFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
-                //     !createPostFormik.isValid ||                                // Disable when form is invalid
-                //     !createPostFormik.dirty                                     // Disable when form has no changes
-                // }
+                disabled={
+                    createPostFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
+                    !createPostFormik.isValid ||                                // Disable when form is invalid
+                    !createPostFormik.dirty                                     // Disable when form has no changes
+                }
                 >
                 {status === 'loading' || createPostFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Publish" }    
             </Button>

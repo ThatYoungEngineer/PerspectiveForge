@@ -27,15 +27,15 @@ const Header = () => {
     return (
     <>
         <Navbar fluid rounded border >
-            <Navbar.Brand onClick={() => navigate('/')} >
+            <Navbar.Brand onClick={() => navigate('/')} className="w-24 md:w-44" >
                 {theme === 'light' 
                     ? <img src={logo} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
                     : <img src={logoLight} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
                 }
             </Navbar.Brand>
-            <div className="flex gap-2 md:order-2 items-center justify-center ">
+            <div className="flex gap-3 md:order-2 items-center justify-end w-24 md:w-44 ">
                 <Button
-                    className='w-12 h-10 hidden xl:flex items-center justify-center'
+                    className='w-12 h-10 hidden lg:flex items-center justify-center'
                     color='gray'
                     pill
                     onClick={handleThemeChange}
@@ -61,6 +61,11 @@ const Header = () => {
                             <span className="block text-sm">{currentUser.userData.full_name}</span>
                             <span className="block text-sm font-medium truncate">{currentUser.userData.email}</span>
                         </Dropdown.Header>
+                        {currentUser?.userData.isAdmin && (
+                            <Link to={'/dashboard?tab=create-new-post'}>
+                                <Dropdown.Item>Dashboard</Dropdown.Item>
+                            </Link>
+                        )}
                         <Link to={'/dashboard?tab=profile'}>
                             <Dropdown.Item>Profile</Dropdown.Item>
                         </Link>

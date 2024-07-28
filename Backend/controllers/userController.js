@@ -67,11 +67,10 @@ export const googleAuth = async (req, res) => {
     const {displayName, email, password, photoUrl} = req.body
 
     const user = await User.findOne({email})
-
     if (user) {
         try {
             const {password: pass, ...userData} = user._doc
-            const token = jwt.sign( {id: user._id}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+            const token = jwt.sign( {id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
             res
             .status(200)
             .cookie("jwt", token, {httpOnly: true})
@@ -93,7 +92,7 @@ export const googleAuth = async (req, res) => {
             .save().then(() => {
                 res.status(201).json({ message: 'Signed Up successfully' });
             })
-            const token = jwt.sign( {id: user._id}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+            const token = jwt.sign( {id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
             res
             .status(200)
             .cookie("jwt", token, {httpOnly: true})
@@ -103,34 +102,6 @@ export const googleAuth = async (req, res) => {
         }
     }
 }
-
-// export const googleAuth = async (req, res) => {
-//     try {
-//         const { displayName, email, photoUrl } = req.body;
-//         let user = await User.findOne({ email });
-
-//         if (!user) {
-//             const generatePassword = Math.random().toString(36).slice(-8);
-//             const hashPassword = bcryptjs.hashSync(generatePassword, 10);
-//             user = new User({
-//                 full_name: displayName,
-//                 email,
-//                 password: hashPassword,
-//                 profilePhoto: photoUrl
-//             });
-//             await user.save();
-//             res.status(201).json({ message: 'Signed Up successfully' });
-//         }
-
-//         const { password, ...userData } = user._doc;
-//         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // One-time session
-//         res.cookie("jwt", token, { httpOnly: true }).status(200).json({ userData, message: "Signed In successfully" });
-//     } catch (error) {
-//         console.error("Error in googleAuth:", error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// }
-
 
 export const logout = (req, res) => {
     res.clearCookie("jwt", { path: "/" })
@@ -189,9 +160,15 @@ export const deleteUser = async (req, res) => {
 export const checkUserAuth = async (req, res) => {
     const token = req.cookies.jwt
     if (token) {
-        return res.status(200)
+        jwt.verify(token, process.env.JWT_SECRET_KEY, (err) => {
+            if (err) {
+                return res.status(401).json({ message: "Not Authorized! Please login again (invalid token)" });
+            } else {
+                return res.status(200)
+            }
+        })
     } else {
-        return res.status(401).json({ message: "Not Authorized. No Token Found!" });
+        return res.status(401).json({ message: "Not Authorized. No Token Found!" })
     }
 }
 
