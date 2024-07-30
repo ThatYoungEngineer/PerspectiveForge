@@ -9,6 +9,8 @@ import { useFormik } from "formik"
 
 import { createPost } from '../store/postSlice.js'
 import { useDispatch, useSelector } from 'react-redux'
+import { IoIosCheckmarkCircleOutline } from 'react-icons/io'
+import { HiInformationCircle } from 'react-icons/hi'
 
 const options = [
     { key: 'select', value: 'Select a category', disabled: true, hidden: true, selected: true },
@@ -76,8 +78,9 @@ const CreatePost = () => {
         },
         validationSchema: schema,
         onSubmit: async (values, { resetForm } ) => {
-            console.log('submit')
             try {
+                setSuccess('')
+                setError('')
                 const data = {
                     id: currentUser.userData.id,
                     title: values.title,
@@ -86,13 +89,15 @@ const CreatePost = () => {
                 }
                 dispatch(createPost(data))
                 .then((data) =>{
-                    console.log(data.payload)
-                })
-                .catch((error) => {
-                    console.log(error)
+                    if (data?.error) {
+                        setError(data.error.message)                    
+                    } else {
+                        setSuccess(data.payload?.message)
+                        resetForm()
+                    }
                 })
             } catch (error) {
-                console.log(error)
+                console.log('There is an error, while processing your request: ', error)
             }            
         }
     })
@@ -168,6 +173,16 @@ const CreatePost = () => {
                 >
                 {status === 'loading' || createPostFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Publish" }    
             </Button>
+            {success && 
+                <Alert  color="success" icon={IoIosCheckmarkCircleOutline}>
+                    <p>{success}</p>
+                </Alert> 
+            }
+            {error && 
+                <Alert color="failure" icon={HiInformationCircle} >
+                    <p>{error}</p>
+                </Alert> 
+            }
         </form>
     </div>
   )

@@ -134,8 +134,7 @@ export const deleteUser = createAsyncThunk (
                 const data = await res.json()
                 throw new Error(data.message)
             } else {
-                const response = await res.json()
-                console.log("Deleted user respnse: ", response)
+                await res.json()
             }
         } catch (error) { throw new Error(error.message) }
     }

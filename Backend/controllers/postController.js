@@ -1,32 +1,48 @@
 import { Post } from '../models/postModel.js'
 
 export const createPost = async (req, res) => {
-    console.log(req.user)
+    const {title} = req.body;
+
     if(!req.user.isAdmin) return res.status(403).json({message: 'You are not allowed to create a post!'});
     if(!req.body.title || !req.body.category ||!req.body.description) return res.status(400).json({message: 'Fill out post details to publish!'});
-
-    const slug = req.body.title
-    .split(' ')
-    .join('-')
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9-]/g, '');
     
-    const newPost = new Post ({
-        author: req.user._id,
-        title: req.body.title,
-        category: req.body.category,
-        description: req.body.description,
-        image: req.body.image,
-        slug
-    })
-
     try {
-        await newPost
-        .save()
-        .then(() => {
-            res.status(200).json({message: 'Post published successfully'})
-        })
+        const existingTitle = await Post.findOne({title})
+        if(existingTitle) {
+            return res.status(409).json({message: 'Post with this title already exists!'});
+        }     
+
+        let slug = title
+        .split(' ')
+        .join('-')
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9-]/g, '');
+
+        const existingSlug = await Post.findOne({slug})
+        const originalSlug = slug
+        if(existingSlug) {
+            const count = originalSlug.match(/-\d+$/)?.[0].slice(1) || 0
+            slug += `-${count + 1}`
+        }
+        
+        const newPost = new Post ({
+            author: req.user._id,
+            title: req.body.title,
+            category: req.body.category,
+            description: req.body.description,
+            image: req.body.image,
+            slug
+        })    
+    
+        await newPost.save()
+        res.status(200).json({message: 'Post published successfully'})
+
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error: ", error: error })        
+        if (error.message.includes('buffering timed out')) res.status(504).json({message: 'Network error. Please try again later'})
+        else res.status(500).json({ message: "Internal Server Error"})        
     }
+}
+
+export const getPosts = async (req, res) => {
+
 }

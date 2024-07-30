@@ -129,10 +129,11 @@ const uploadImage = async () => {
           confirmPassword: "",
         },
         validationSchema: schema,
-        onSubmit: async (values, { resetForm } ) => {
+        onSubmit: async (values ) => {
             try {
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
+                document.querySelectorAll('input').forEach(element => element.blur());
                 let userData = {
                     id: currentUser.userData._id,
                     ...(values.full_name && { full_name: values.full_name }),
@@ -155,7 +156,6 @@ const uploadImage = async () => {
                     setFormErrorMessage(data.error.message);
                 } else {
                     setFormSuccessMessage(data.payload.message);
-                    resetForm()
                 }
             } catch (error) { 
                 setFormErrorMessage("Failed! Internet connection error, please try again.") 
@@ -199,7 +199,7 @@ const uploadImage = async () => {
         <div className='w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10'>
             <h2 className="text-4xl font-semibold md:mb-0"> Profile </h2>
 
-            <form onSubmit={updateUserFormik.handleSubmit} className="w-[90vw] md:w-full h-full flex gap-5 flex-col items-center justify-center ">
+            <form onSubmit={updateUserFormik.handleSubmit} className="w-[90vw] md:w-full h-full flex gap-5 flex-col items-center justify-center" >
         
                 <input 
                     name="profilePhoto" 
@@ -215,6 +215,7 @@ const uploadImage = async () => {
                         className={`w-full h-full object-cover rounded-full transition ease-in-out duration-200 
                         ${(imageUploadingProgress && imageUploadingProgress < 100) && 'opacity-40 cursor-not-allowed'}
                         ${(updateUserFormik.isSubmitting || status === 'loading') && 'opacity-40 cursor-not-allowed'}`}
+                        loading="lazy"
                     />
                     <MdModeEditOutline className="absolute -bottom-1 -right-5 hover:bg-[#ececec62] rounded-full w-9 h-9 p-2 transition ease-in-out duration-200 cursor-pointer" onClick={ () => filePickerRef.current.click() } />
                 </picture>
@@ -231,8 +232,8 @@ const uploadImage = async () => {
                         id="full_name"
                         name="full_name"
                         type="text"
-                        className=" w-full md:w-[30rem]"
-                        defaultValue={currentUser.userData.full_name}
+                        className="w-full md:w-[30rem]"
+                        defaultValue={updateUserFormik.values.full_name}
                         onBlur={updateUserFormik.handleBlur}
                         onChange={updateUserFormik.handleChange} 
                     />
@@ -304,36 +305,38 @@ const uploadImage = async () => {
                         </Link>
                     )
                 }
-                <Accordion className="md:w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon  style={{ color: "rgb(182, 28, 28)" }} />}
-                        aria-controls="panel2-content"
-                        id="panel2-header"
-                        style={{borderRadius: '.4rem'}}
-                    >
-                        <h3 style={{ fontSize: '14px', color: 'rgb(182, 28, 28)'}} > Delete Account? </h3>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <h3 style={{ fontSize: '14px' }}>
-                            Type your email address below, to delete your account. <br />
-                        </h3>
-                        <span className="mt-5 w-full flex justify-between items-center flex-row gap-[5%]" >
-                            <TextInput
-                                type="email" className="w-[70%]"
-                                id="deleteAccountEmail"
-                                onChange={handleDeleteAccountEmail}
-                                placeholder="Your email address"
-                            />
-                            <MUIbtn
-                                variant="contained" color="error" type="button"
-                                disabled={ deleteAccountEmail !== currentUser.userData.email} className="w-[25%]"
-                                onClick={()=>setDeleteAccountPopup(true)} 
-                            >
-                                Delete
-                            </MUIbtn>
-                        </span>
-                    </AccordionDetails>
-                </Accordion>
+                {!currentUser.userData.isAdmin && 
+                    <Accordion className="md:w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon  style={{ color: "rgb(182, 28, 28)" }} />}
+                            aria-controls="panel2-content"
+                            id="panel2-header"
+                            style={{borderRadius: '.4rem'}}
+                        >
+                            <h3 style={{ fontSize: '14px', color: 'rgb(182, 28, 28)'}} > Delete Account? </h3>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <h3 style={{ fontSize: '14px' }}>
+                                Type your email address below, to delete your account. <br />
+                            </h3>
+                            <span className="mt-5 w-full flex justify-between items-center flex-row gap-[5%]" >
+                                <TextInput
+                                    type="email" className="w-[70%]"
+                                    id="deleteAccountEmail"
+                                    onChange={handleDeleteAccountEmail}
+                                    placeholder="Your email address"
+                                />
+                                <MUIbtn
+                                    variant="contained" color="error" type="button"
+                                    disabled={ deleteAccountEmail !== currentUser.userData.email} className="w-[25%]"
+                                    onClick={()=>setDeleteAccountPopup(true)} 
+                                >
+                                    Delete
+                                </MUIbtn>
+                            </span>
+                        </AccordionDetails>
+                    </Accordion>
+                }
             </form>
         </div>
     </>
@@ -341,5 +344,4 @@ const uploadImage = async () => {
 }
 
 const MemoizedProfile = memo(Profile)
-
 export default MemoizedProfile

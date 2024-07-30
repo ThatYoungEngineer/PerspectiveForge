@@ -23,7 +23,8 @@ const persistConfig = {
     key: 'perspectiveforge',
     storage,
     version: 1,
-    transforms: [encryption]
+    transforms: [encryption],
+    blacklist: ['post']
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

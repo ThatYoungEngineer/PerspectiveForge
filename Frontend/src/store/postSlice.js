@@ -17,15 +17,15 @@ export const createPost = createAsyncThunk(
                 },
                 body: JSON.stringify(data)
             });
-
             if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.message);
+                const data = await res.json()
+                throw new Error(data.message)
             } else {
-                return await res.json();
+                const data = await res.json()
+                return data
             }
         } catch (err) {
-            throw new Error(err.message)
+            throw err
         }
     }
 )
