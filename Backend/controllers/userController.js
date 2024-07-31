@@ -64,44 +64,50 @@ export const login = async (req, res) => {
 }   
 
 export const googleAuth = async (req, res) => {
-    const {displayName, email, password, photoUrl} = req.body
+    const { displayName, email, photoUrl } = req.body;
 
-    const user = await User.findOne({email})
-    if (user) {
-        try {
-            const {password: pass, ...userData} = user._doc
-            const token = jwt.sign( {id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            const { password: pass, ...userData } = user._doc;
+            const token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin },
+                process.env.JWT_SECRET_KEY,
+                { expiresIn: '1h' }
+            );
             res
             .status(200)
-            .cookie("jwt", token, {httpOnly: true})
+            .cookie("jwt", token, { httpOnly: true })
             .json({ userData, message: "Signed In successfully" });
-        } catch (e) {
-            res.status(500).json({ message: "Internal Server Error" });
-        }
-    } else {
-        try {
-            const generatePassword = Math.random().toString(36).slice(-8)
-            const hashPassword = bcryptjs.hashSync(generatePassword, 10)
-            const newUser = new User({
+        } else {
+            const generatePassword = Math.random().toString(36).slice(-8);
+            const hashPassword = bcryptjs.hashSync(generatePassword, 10);
+
+            const newUser = await new User({
                 full_name: displayName,
                 email,
                 password: hashPassword,
+                isAdmin: false,
                 profilePhoto: photoUrl
-            })
-            newUser
-            .save().then(() => {
-                res.status(201).json({ message: 'Signed Up successfully' });
-            })
-            const token = jwt.sign( {id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY, { expiresIn: '1h'} )    //by default its a one time session
+            }).save();
+
+            const { password: pass, ...userData } = newUser._doc;
+            const token = jwt.sign(
+                { id: newUser._id, isAdmin: newUser.isAdmin },
+                process.env.JWT_SECRET_KEY,
+                { expiresIn: '1h' }
+            );
+
             res
             .status(200)
-            .cookie("jwt", token, {httpOnly: true})
+            .cookie("jwt", token, { httpOnly: true })
             .json({ userData, message: "Signed In successfully" });
-        } catch (err) {
-            res.status(500).json({ message: "Internal Server Error" });
         }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
 export const logout = (req, res) => {
     res.clearCookie("jwt", { path: "/" })

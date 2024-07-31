@@ -72,7 +72,7 @@ export const oAuth = createAsyncThunk(
             }
         } catch (err) {
             console.log('hello', err)
-            throw new Error(err.message)
+            // throw new Error(err.message)
         }
     }
 ) 

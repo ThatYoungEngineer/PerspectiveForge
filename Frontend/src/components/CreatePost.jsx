@@ -12,6 +12,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import { IoIosCheckmarkCircleOutline } from 'react-icons/io'
 import { HiInformationCircle } from 'react-icons/hi'
 
+import { app } from '../utils/firebase.js'
+import {
+    getDownloadURL,
+    ref,
+    getStorage,
+    uploadBytesResumable
+} from 'firebase/storage'
+
+
 const options = [
     { key: 'select', value: 'Select a category', disabled: true, hidden: true, selected: true },
     { key: 'typescript', value: 'TypeScript' }, { key: 'javascript', value: 'JavaScript' }, 
@@ -30,28 +39,67 @@ const CreatePost = () => {
     const { currentUser } = useSelector((state)=>state.user)
     const { status } = useSelector((state)=>state.post)
 
-    const [ file, setFile ] = useState(null)
-    const [ fileURL, setFileURL ] = useState(null)
-    const [ fileError, setFileError ] = useState(null)
+    const [ imageFile, setImageFile ] = useState(null)
+    const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
+    const [imageFileUploadError, setImageFileUploadError] = useState(null)
+    const [ imageFileURL, setImageFileURL ] = useState(null)
+    const [ imageFileError, setImageFileError ] = useState(null)
 
     const [ error, setError ] = useState(null)
     const [ success, setSuccess ] = useState(null)
         
     const handleFileChange = (event) => {
-        setFileURL(null)
-        setFileError(null)
+        setImageFileURL(null)
+        setImageFileError(null)
         const image = event.target.files[0]
         try{
             if (image?.type.includes('image/')) {
                 if (image.size < 2097152) {              //  Greater than 2MB
-                    setFile(image)
-                    setFileURL(URL.createObjectURL(image))
-                    // updateUserFormik.setFieldValue("profilePhoto", URL.createObjectURL(file))
-                    // updateUserFormik.setFieldTouched("profilePhoto", true, true);
-                } else setFileError('Failure. Image must be less than 2MB!')
-            } else setFileError('Failure. File type must be an image!')
+                    setImageFile(image)
+                    setImageFileURL(URL.createObjectURL(image))
+                    createPostFormik.setFieldValue("blogImage", URL.createObjectURL(file))
+                    createPostFormik.setFieldTouched("blogImage", true, true);
+                } else setImageFileError('Failure. Image must be less than 2MB!')
+            } else setImageFileError('Failure. File type must be an image!')
         } catch(e) {return}
     }
+
+    const uploadImage = async () => {
+        if (!navigator.onLine) return
+    
+        setImageFileUploadError(null);
+        const storage = getStorage(app);
+        const fileName = new Date().getTime() + imageFile?.name;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    
+        const uploadPromise = new Promise((resolve, reject) => {
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setImageUploadingProgress(progress.toFixed(0));
+                },
+                (error) => {
+                    setImageFileUploadError("Could not upload image. Please try again!");
+                    reject(error);
+                },
+                async () => {
+                    try {
+                        const url = await getDownloadURL(uploadTask.snapshot.ref);
+                        setImageFileURL(url);
+                        resolve(url);
+                    } catch (error) {
+                        setImageFileUploadError("Could not retrieve download URL.");
+                        reject(error);
+                    }
+                }
+            );
+        });
+    
+        return await uploadPromise;
+    }
+    
     const schema = yup.object().shape({
         title: yup
         .string()
@@ -81,22 +129,37 @@ const CreatePost = () => {
             try {
                 setSuccess('')
                 setError('')
-                const data = {
+                let data = {
                     id: currentUser.userData.id,
                     title: values.title,
                     category: values.category,
                     description: values.description,
                 }
+                if (imageFile) {
+                    const firebaseUpload = await uploadImage();
+                    if (firebaseUpload) {
+                        data = {
+                            ...data,
+                            blogImage: firebaseUpload
+                        }
+                        setImageFile(null)
+                    } else {
+                        throw new Error("Image upload failed!")
+                    }
+                }
                 dispatch(createPost(data))
-                .then((data) =>{
+                .then((data) => {
                     if (data?.error) {
                         setError(data.error.message)                    
                     } else {
                         setSuccess(data.payload?.message)
+                        setImageFile(null)
+                        setImageFileURL(null)
                         resetForm()
                     }
                 })
             } catch (error) {
+                setError('There is an error, while processing your request')
                 console.log('There is an error, while processing your request: ', error)
             }            
         }
@@ -108,7 +171,8 @@ const CreatePost = () => {
         <form onSubmit={createPostFormik.handleSubmit} className="w-[90vw] md:w-full max-w-3xl flex flex-col gap-5">
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
-                    <TextInput type="text" name="title" className="w-full" placeholder="Title" 
+                    <TextInput type="text" id="title" name="title" className="w-full" placeholder="Title" 
+                        value={createPostFormik.values.title} 
                         onBlur={createPostFormik.handleBlur}
                         onChange={createPostFormik.handleChange}                     
                     />
@@ -116,6 +180,7 @@ const CreatePost = () => {
                 </div>
                 <div className='flex flex-col'>
                     <Select style={{cursor: 'pointer'}} as='select' name='category'
+                        value={createPostFormik.values.category} 
                         onBlur={createPostFormik.handleBlur}
                         onChange={createPostFormik.handleChange}                                         
                     >
@@ -134,16 +199,31 @@ const CreatePost = () => {
                 </div>
             </div>
             <div className="p-3 border-4 border-dotted border-teal-400 flex flex-col gap-3 md:flex-row md:items-center justify-between">
-                <FileInput type='file' accept='image' onChange={handleFileChange} placeholder='Upload Image' className='order-2 md:order-1' />
+                <FileInput 
+                    type='file' name='blogImage' accept='image' multiple={false}
+                    placeholder='Upload Image' className='order-2 md:order-1' 
+                    onChange={handleFileChange}
+                    value={createPostFormik.values.blogImage}
+                />
                 <Alert color='info' icon={IoWarning} className='order-1 md:order-2'>
                     Blog Thumbnail
                 </Alert>
             </div>
-            {fileError &&
-                <Alert color='failure' >{fileError}</Alert>
+            {imageFileError &&
+                <Alert color='failure'>{imageFileError}</Alert>
             }
-            {fileURL && 
-                <img src={fileURL} alt="selected-image" className='border-2 border-teal-400' />
+            {imageFileUploadError &&
+                <Alert color='failure' >
+                    <p>{imageFileUploadError}</p>
+                </Alert> 
+            }
+            {imageFileURL && 
+                <img 
+                    src={imageFileURL} alt="selected-image" 
+                    className={`border-2 border-teal-400 aspect-[4/4]
+                    ${(imageUploadingProgress && imageUploadingProgress < 100) && 'opacity-40 cursor-not-allowed'}
+                    ${(createPostFormik.isSubmitting || status === 'loading') && 'opacity-40 cursor-not-allowed'}`}
+                />
             }
             <div className='relative'>
                 <ReactQuill 

@@ -117,7 +117,9 @@ const uploadImage = async () => {
         .matches( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$/, "Choose a strong password" ),
         confirmPassword: yup
         .string()
-        .oneOf([yup.ref('password'), null], 'Passwords must match')        
+        .test('passwords-match', 'Passwords must match', function(value) {
+            return value === this.parent.password;
+        })
     })
 
     const updateUserFormik = useFormik({
@@ -129,7 +131,7 @@ const uploadImage = async () => {
           confirmPassword: "",
         },
         validationSchema: schema,
-        onSubmit: async (values ) => {
+        onSubmit: async (values, {resetForm} ) => {
             try {
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
@@ -151,15 +153,17 @@ const uploadImage = async () => {
                         throw new Error("Image upload failed!")
                     }
                 }
-                const data = await dispatch(updateUser(userData));
+                const data = await dispatch(updateUser(userData))
                 if (data.error?.message) {
                     setFormErrorMessage(data.error.message);
                 } else {
                     setFormSuccessMessage(data.payload.message);
+                    resetForm()
                 }
             } catch (error) { 
+                console.error(error)
                 setFormErrorMessage("Failed! Internet connection error, please try again.") 
-            }            
+            }       
         }
     })
 
@@ -175,7 +179,7 @@ const uploadImage = async () => {
                 <article className="w-[90vw] xl:w-[40vw] 2xl:w-[30vw] bg-[#262630] p-10 z-40 flex flex-col gap-3">
                     <h3 className="text-base text-[#FF4040] font-medium" >Are you sure, You want to delete your account?</h3>
                     <Alert color="warning" icon={HiInformationCircle}>
-                        <span className="font-medium">Note!</span> This change is irrevesible.
+                        <span className="font-medium">Note!</span> This change is irreversible.
                     </Alert>
                     <div className="w-full flex items-center gap-[5%] mt-10">
                         <MUIbtn
@@ -233,7 +237,7 @@ const uploadImage = async () => {
                         name="full_name"
                         type="text"
                         className="w-full md:w-[30rem]"
-                        defaultValue={updateUserFormik.values.full_name}
+                        defaultValue={currentUser.userData.full_name}
                         onBlur={updateUserFormik.handleBlur}
                         onChange={updateUserFormik.handleChange} 
                     />
@@ -281,7 +285,6 @@ const uploadImage = async () => {
                         value={updateUserFormik.values.confirmPassword} 
                         onBlur={updateUserFormik.handleBlur}
                         onChange={updateUserFormik.handleChange} 
-
                     />
                     {(updateUserFormik.touched.confirmPassword && updateUserFormik.errors.confirmPassword) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.confirmPassword}</p>}
                 </div>
