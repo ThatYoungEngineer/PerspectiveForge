@@ -3,6 +3,7 @@ import MemoizedProfile from "../components/Profile"
 import { useLocation } from "react-router"
 import { useState, useEffect } from "react"
 import CreatePost from "../components/CreatePost"
+import Posts from "../components/Posts"
 
 const Dashboard = () => {
 
@@ -26,6 +27,7 @@ const Dashboard = () => {
         <section className="w-full">
           {tab === 'profile' && <MemoizedProfile /> }
           {tab === 'create-new-post' && <CreatePost /> }
+          {tab === 'posts' && <Posts /> }
         </section>
       </div>
     </>
