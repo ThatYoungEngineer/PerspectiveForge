@@ -28,7 +28,7 @@ const DashboardLinks = () => {
 
   return (
     <div className="w-full min-h-screen flex">
-      <aside className="hidden md:block">
+      <aside className="hidden lg:block">
         <Sidebar />
       </aside>
       <section className="w-full">

@@ -1,56 +1,65 @@
-import { useDispatch, useSelector } from "react-redux"
-import { getPosts } from "../store/postSlice"
-import { useEffect, useState, memo } from "react"
-import { Spinner, Alert } from "flowbite-react"
-import { GoAlertFill } from "react-icons/go"
+import { memo } from "react"
 
 const Dashboard = () => {
-    const dispatch = useDispatch()
-    const { post, status } = useSelector(state => state.post)
-
-    const [error, setError] = useState(null)
-
-    useEffect(() => {
-        if (!post || post.length === 0) {
-            dispatch(getPosts())
-            .then((data) => {
-                if (data?.error) setError(data.error.message)
-            })
-        }
-    }, [dispatch, post])
 
     return (
-        <>  
-            {status === 'loading' && (
-                <div className="w-full h-full flex items-center justify-center">
-                    <Spinner size='xl' />
-                </div>
-            )}
-
-            {status === 'error' && (
-                <div className="w-full h-full flex items-center justify-center">
-                    <Alert color='failure' icon={GoAlertFill}>
-                        {error}
-                    </Alert>
-                </div>
-            )}
-
-            {status === 'fulfilled' && (
-                <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">Posts</h2>
-                    {(!post || post.posts.length === 0) && (
-                        <p className="text-lg text-gray-500">No posts found.</p>
+        <>
+            {/* {currentUser.userData.isAdmin
+            ?   <>
+                    {status === 'loading' && (
+                        <div className="w-full h-[85%] flex items-center justify-center">
+                            <Spinner size='xl' />
+                        </div>
                     )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-                        {post.posts.map((p) => (
-                            <div key={p._id} className="border p-5 rounded-md shadow-md">
-                                <h3 className="text-xl font-semibold">{p.title}</h3>
-                                <img src={p.image} alt="" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+
+                    {status === 'error' && (
+                        <div className="w-full h-[85%] flex items-center justify-center">
+                            <Alert color='failure' icon={GoAlertFill} className="w-full px-10">
+                                {error}
+                            </Alert>
+                        </div>
+                    )}
+
+                    {status === 'fulfilled' && (
+                        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 ">
+                            <Table hoverable className="shadow-md" >
+                                <Table.Head >
+                                    <Table.HeadCell className="w-1/5 whitespace-nowrap" >Date Updated</Table.HeadCell>
+                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Post Image</Table.HeadCell>
+                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Post Title</Table.HeadCell>
+                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Category</Table.HeadCell>
+                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Actions</Table.HeadCell>
+                                </Table.Head>
+                                {post.posts.map((p) => (
+                                    <Table.Body key={p._id} className="divide-y" >
+                                        <Table.Row className="w-full" >
+                                            <Table.Cell className="w-1/5 whitespace-nowrap">
+                                                {new Date(p.updatedAt).toLocaleDateString()}
+                                            </Table.Cell>
+                                            <Table.Cell className="w-1/5 whitespace-nowrap" >
+                                                <div className="w-28 h-16 max-w-28 max-h-16 overflow-hidden border-none rounded-md">
+                                                    <img src={p.image} alt={p.title} className="w-28 h-16 hover:scale-[1.1] transition-all ease-in-out duration-200 border-none object-center object-fill " />
+                                                </div>
+                                            </Table.Cell>
+                                            <Table.Cell className="w-1/5" > {p.title} </Table.Cell>
+                                            <Table.Cell className="w-1/5 whitespace-nowrap" > {p.category} </Table.Cell>
+                                            <Table.Cell className="w-1/5 whitespace-nowrap" > 
+                                                <div className="flex gap-1 items-center" >
+                                                    <div className="ActionButtonBG"> <FaRegEye size={15} className="cursor-pointer" /> </div>
+                                                    <div className="ActionButtonBG"> <GoPencil size={15} className="cursor-pointer" /> </div>
+                                                    <div className="ActionButtonBG"> <GoTrash size={15} color="red" className="cursor-pointer" /> </div>
+                                                </div>    
+                                             </Table.Cell>
+                                        </Table.Row>
+                                    </Table.Body>
+                                ))}
+                            </Table>
+                        </div>
+                    )}
+                </>  
+            : <p className="mx-auto text-base">No posts found.</p>
+            } */}
+            <p className="text-center text-gray-500">You are not authorized to view this page.</p>
         </>
     )
 }

@@ -37,9 +37,7 @@ const options = [
 const CreatePost = () => {
     const dispatch = useDispatch()
     const { currentUser } = useSelector((state)=>state.user)
-    const { post, status } = useSelector((state)=>state.post)
-
-    console.log('post guys: ', post)
+    const { status } = useSelector((state)=>state.post)
 
     const [ imageFile, setImageFile ] = useState(null)
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)
@@ -107,7 +105,7 @@ const CreatePost = () => {
         .string()
         .required("Title is required")
         .min(2, "Title must be at least 2 characters")
-        .max(24, "Title is too long!")
+        .max(100, "Title is too long!")
         .trim(),
         description: yup
         .string()
