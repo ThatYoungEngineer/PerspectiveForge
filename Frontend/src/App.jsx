@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import SignIn from "./pages/SignIn"
 import SignUp from './pages/SignUp'
-import Dashboard from './pages/Dashboard'
+import DashboardLinks from './pages/DashboardLinks'
 import About from "./pages/About"
 import AuthRoutes from "./components/AuthRoutes"
 import PrivateRoutes from "./components/PrivateRoutes"
@@ -48,7 +48,7 @@ const App = () => {
         </Route>
         <Route path="/about" element={<About />} />
         <Route element={<PrivateRoutes />} >
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardLinks />} />
         </Route>
         <Route element={<AdminRoutes />}>
           <Route path="/dashboard?tab=create-new-post" element={<CreatePost />} />

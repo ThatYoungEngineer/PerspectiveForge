@@ -37,7 +37,9 @@ const options = [
 const CreatePost = () => {
     const dispatch = useDispatch()
     const { currentUser } = useSelector((state)=>state.user)
-    const { status } = useSelector((state)=>state.post)
+    const { post, status } = useSelector((state)=>state.post)
+
+    console.log('post guys: ', post)
 
     const [ imageFile, setImageFile ] = useState(null)
     const [imageUploadingProgress, setImageUploadingProgress] = useState(null)

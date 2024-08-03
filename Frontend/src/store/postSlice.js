@@ -30,6 +30,26 @@ export const createPost = createAsyncThunk(
     }
 )
 
+export const getPosts = createAsyncThunk(
+    'post/get-posts',
+    async () => {
+        try {
+            const res = await fetch('/api/post/get-posts', {
+                method: 'GET',
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.message)
+            } else {
+                const data = await res.json()
+                return data
+            }
+        } catch (error) {
+            throw error.message
+        }
+    }
+)
+
 const postSlice = createSlice({
     name: 'post',
     initialState,
@@ -40,11 +60,24 @@ const postSlice = createSlice({
             state.status = 'loading'
         })
         .addCase(createPost.fulfilled, (state, action) => {
-            state.status = 'idle'
+            state.status = 'fulfilled'
             state.post.unshift(action.payload)
             state.error = null
         })
         .addCase(createPost.rejected, (state, action) => {
+            state.status = 'error'
+            state.error = action.error.message
+        }),
+        builder
+        .addCase(getPosts.pending, (state) => {
+            state.status = 'loading'
+        })
+        .addCase(getPosts.fulfilled, (state, action) => {
+            state.status = 'fulfilled'
+            state.post = action.payload
+            state.error = null
+        })
+        .addCase(getPosts.rejected, (state, action) => {
             state.status = 'error'
             state.error = action.error.message
         })

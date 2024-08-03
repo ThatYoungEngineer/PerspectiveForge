@@ -62,7 +62,7 @@ const Header = () => {
                             <span className="block text-sm font-medium truncate">{currentUser.userData.email}</span>
                         </Dropdown.Header>
                         {currentUser?.userData.isAdmin && (
-                            <Link to={'/dashboard?tab=create-new-post'}>
+                            <Link to={'/dashboard'}>
                                 <Dropdown.Item>Dashboard</Dropdown.Item>
                             </Link>
                         )}

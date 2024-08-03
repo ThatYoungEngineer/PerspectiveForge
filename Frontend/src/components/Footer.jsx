@@ -12,24 +12,20 @@ const Footer = () => {
     <Feet container className='border border-t-8 border-teal-500'>
       <div className='w-full max-w-8xl mx-auto'>
         <div className='grid w-full justify-between sm:flex md:grid-cols-1'>
-          <div className='mt-5'>
-            <Link
-              to='/'
-              className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'
-            >
-              {theme === 'light' 
-                ? <img src={logo} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
-                : <img src={logoLight} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
-              }
-            </Link>
-          </div>
+          <Link
+            to='/'
+            className='self-center whitespace-nowrap text-lg sm:text-xl font-semibold dark:text-white'
+          >
+            {theme === 'light' 
+              ? <img src={logo} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
+              : <img src={logoLight} className="w-40 md:w-44 cursor-pointer" alt="logo" /> 
+            }
+          </Link>
           <div className='grid grid-cols-2 gap-8 mt-4 sm:grid-cols-3 sm:gap-6'>
             <div>
                 <Feet.Title title='About' />
                 <Feet.LinkGroup col>
-                  <Link to={'/about'}>
-                    About
-                  </Link>
+                  <Feet.Link href='/about'>About</Feet.Link>
                 </Feet.LinkGroup>
             </div>
             <div>

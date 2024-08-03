@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 
 const Sidebar = () => {
     const [tab, setTab] = useState(null)
+    const [ dash, setDash ] = useState(false)
     const dispatch = useDispatch()
     const location = useLocation()
     const { currentUser } = useSelector(state=>state.user)
@@ -16,7 +17,16 @@ const Sidebar = () => {
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search)
         const tabFromURL = urlParams.get("tab")
-        if (tabFromURL) setTab(tabFromURL)
+        if (tabFromURL) {
+            setTab(tabFromURL)
+            setDash(false)
+        }
+        if (location.pathname=='/dashboard' && !location.search) {
+            setDash(true)
+            setTab(null)
+        } else {
+            setDash(false)
+        }
     }, [location.search])
 
     const handleSignOut = () => {
@@ -25,10 +35,10 @@ const Sidebar = () => {
 
   return (
     <>
-        <FlowbiteSidebar>   
+        <FlowbiteSidebar className="">   
             <FlowbiteSidebar.ItemGroup className="flex flex-col gap-1">
-                <Link to={'/dashboard?tab=create-new-post'}>
-                    <FlowbiteSidebar.Item icon={MdDashboard} as='div' >
+                <Link to={'/dashboard'}>
+                    <FlowbiteSidebar.Item icon={MdDashboard} as='div' active={dash} >
                         Dashboard
                     </FlowbiteSidebar.Item>
                 </Link>
