@@ -3,10 +3,10 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
-    const { full_name, email, password } = req.body;
+    const { full_name, email, password } = req.body
 
     if (!full_name || !email || !password || email === "" || password === "" || full_name === "") {
-        return res.status(400).json({ message: 'All fields are required' });
+        return res.status(400).json({ message: 'All fields are required' })
     }
 
     try {
@@ -104,7 +104,7 @@ export const googleAuth = async (req, res) => {
             .json({ userData, message: "Signed In successfully" });
         }
     } catch (err) {
-        console.error(err);
+        console.log("hello-err");
         res.status(500).json({ message: "Internal Server Error" });
     }
 };

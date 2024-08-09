@@ -50,6 +50,27 @@ export const getPosts = createAsyncThunk(
     }
 )
 
+export const showMorePosts = createAsyncThunk(
+    'post/get-posts?startIndex',
+    async (startIndex) => {
+        console.log(startIndex)
+        try {
+            const res = await fetch(`/api/post/get-posts?startIndex=${startIndex}`, {
+                method: 'GET',
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.message)
+            } else {
+                const data = await res.json()
+                return data
+            }
+        } catch (error) {
+            throw error.message
+        }
+    }
+)
+
 const postSlice = createSlice({
     name: 'post',
     initialState,
@@ -61,7 +82,6 @@ const postSlice = createSlice({
         })
         .addCase(createPost.fulfilled, (state, action) => {
             state.status = 'fulfilled'
-            state.post.unshift(action.payload)
             state.error = null
         })
         .addCase(createPost.rejected, (state, action) => {
@@ -78,6 +98,16 @@ const postSlice = createSlice({
             state.error = null
         })
         .addCase(getPosts.rejected, (state, action) => {
+            state.status = 'error'
+            state.error = action.error.message
+        }),
+        builder
+        .addCase(showMorePosts.fulfilled, (state, action) => {
+            state.status = 'fulfilled'
+            state.post = [[...state.post[0],  ...action.payload[0]], state.post[1]] 
+            state.error = null
+        })
+        .addCase(showMorePosts.rejected, (state, action) => {
             state.status = 'error'
             state.error = action.error.message
         })

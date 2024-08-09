@@ -78,11 +78,15 @@ export const getPosts = async (req, res) => {
             createdAt: { $gte: oneMonthAgo }
         })
 
-        res.status(200).json({
-            posts,
+        // res.status(200).json([{
+        //     posts: posts,
+        //     totalPosts: totalPosts,
+        //     lastMonthPosts: lastMonthPosts
+        // }])  
+        res.status(200).json([posts, {
             totalPosts,
             lastMonthPosts
-        })  
+        }])  
 
     } catch (error) {
         console.log(error.message)

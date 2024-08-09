@@ -16,12 +16,12 @@ export const signInUser = createAsyncThunk(
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(userData)
-        }); 
+        })
         if (!res.ok) {
-            const data = await res.json();
-            throw new Error(data.message);
+            const data = await res.json()
+            throw new Error(data.message)
         } else {
-            return await res.json();
+            return await res.json()
         }
       } catch (err) {
         throw new Error(err.message)
@@ -66,13 +66,12 @@ export const oAuth = createAsyncThunk(
             });
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message);
+                throw data.message
             } else {
                 return await res.json();
             }
         } catch (err) {
-            console.log('hello', err)
-            // throw new Error(err.message)
+            throw err
         }
     }
 ) 

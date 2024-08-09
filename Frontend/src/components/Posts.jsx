@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { getPosts } from "../store/postSlice"
+import { getPosts, showMorePosts } from "../store/postSlice"
 import { useEffect, useState, memo } from "react"
 import { Spinner, Alert, Table } from "flowbite-react"
 import { GoPencil, GoAlertFill, GoTrash } from "react-icons/go"
@@ -8,21 +8,43 @@ import { Link } from "react-router-dom"
 
 const Posts = () => {
   const dispatch = useDispatch()
-  const { post, status } = useSelector(state => state.post)
+  const { post, status, error } = useSelector(state => state.post)
   const { currentUser } = useSelector(state => state.user)
 
-  const [error, setError] = useState(null)
+  let totalPostsFromServer = post[1]?.totalPosts
+  const postsArray = post[0]
+  const postsIndex = postsArray?.length
+
+  const [showMore, setShowMore] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [hideShowMore, setHideShowMore] = useState(false)
 
   useEffect(() => {
-      if ( currentUser.userData.isAdmin) {
-          if (!post || post.length === 0) {
-              dispatch(getPosts())
-              .then((data) => {
-                  if (data?.error) setError(data.error.message)
-              })
-          }
+    if ( currentUser.userData.isAdmin) {
+      if (!post || post.length === 0) {
+        dispatch(getPosts())
       }
-  }, [dispatch, post])
+    }
+    console.log('totalPosts: ', totalPostsFromServer?.totalPosts)
+    console.log('postsIndex: ', postsIndex)
+
+    if (totalPostsFromServer <= postsIndex) {
+      setHideShowMore(true)
+    }
+  }, [post])
+
+  console.log(hideShowMore)
+
+
+  const handleShowMore = () => {
+    setLoading(true)
+    setShowMore(false)
+    dispatch(showMorePosts(postsIndex))
+    .then(() => {
+      setLoading(false)
+      setShowMore(true)
+    })
+  }
 
   return (
     <>
@@ -37,7 +59,7 @@ const Posts = () => {
                     {status === 'error' && (
                         <div className="w-full h-[85%] flex items-center justify-center">
                             <Alert color='failure' icon={GoAlertFill} className="w-full px-10">
-                                {error}
+                              {error}
                             </Alert>
                         </div>
                     )}
@@ -52,7 +74,7 @@ const Posts = () => {
                                     <Table.HeadCell className="w-1/6 whitespace-nowrap">Category</Table.HeadCell>
                                     <Table.HeadCell className="w-1/6 whitespace-nowrap">Actions</Table.HeadCell>
                                 </Table.Head>
-                                {post.posts.map((p) => (
+                                {postsArray.map((p) => (
                                     <Table.Body key={p._id} className="divide-y" >
                                         <Table.Row className="w-full">
                                             <Table.Cell className="w-1/6 whitespace-nowrap">
@@ -60,25 +82,46 @@ const Posts = () => {
                                             </Table.Cell>
                                             <Table.Cell className="w-1/6 whitespace-nowrap" >
                                                 <div className="w-28 h-16 max-w-28 max-h-16 overflow-hidden border-none rounded-md">
-                                                  <img src={p.image} alt={p.title} className="w-28 h-16 hover:scale-[1.1] transition-all ease-in-out duration-200 border-none object-center object-fill " />
+                                                  <img src={p.image} alt={p.title} className="bg-gray-300 w-28 h-16 hover:scale-[1.1] transition-all ease-in-out duration-200 border-none object-center object-fill " />
                                                 </div>
                                             </Table.Cell>
-                                            <Table.Cell className=" min-w-[70vw] md:min-w-[50vw] lg:min-w-[60%] lg:w-full" > {p.title} </Table.Cell>
+                                            <Table.Cell className=" min-w-[70vw] md:min-w-[50vw] lg:min-w-[60%] lg:w-full font-Onest-SemiBold " > {p.title} </Table.Cell>
                                             <Table.Cell className="w-1/6 whitespace-nowrap" > {p.category} </Table.Cell>
                                             <Table.Cell className="w-1/6 whitespace-nowrap" > 
-                                                <div className="flex items-center" >
-                                                  <Link to={`/posts/${p.slug}`}>
-                                                    <div className="ActionButtonBG"> <FaRegEye size={15} /> </div>
-                                                  </Link>
-                                                  <Link to={`/update-post/${post._id}`}>
-                                                    <div className="ActionButtonBG"> <GoPencil size={15} /> </div>
-                                                  </Link>
-                                                    <div className="ActionButtonBG"> <GoTrash size={15} color="red" /> </div>
-                                                </div>    
-                                             </Table.Cell>
+                                              <div className="flex items-center" >
+                                                <Link to={`/post/${p.slug}`}>
+                                                  <div className="ActionButtonBG"> <FaRegEye size={15} /> </div>
+                                                </Link>
+                                                <Link to={`/update-post/${post._id}`}>
+                                                  <div className="ActionButtonBG"> <GoPencil size={15} /> </div>
+                                                </Link>
+                                                <div className="ActionButtonBG"> <GoTrash size={15} color="red" /> </div>
+                                              </div>    
+                                            </Table.Cell>
                                         </Table.Row>
                                     </Table.Body>
                                 ))}
+                                  {hideShowMore == false &&
+                                    <Table.Body>
+                                      <Table.Row className="w-full">
+                                        <Table.Cell className="w-full" colSpan="5" >
+                                        {loading
+                                        ? <div className="FlexCenter h-[10vh]">
+                                          <Spinner size='xl' />
+                                        </div> 
+                                        : showMore && (
+                                          <div
+                                            onClick={handleShowMore}
+                                            className='w-full text-teal-500 self-center text-sm py-7 hover:underline FlexCenter cursor-pointer'
+                                          >
+                                            Show more
+                                          </div>
+                                        )}
+
+                                        </Table.Cell>
+                                      </Table.Row>
+                                    </Table.Body>
+      }
                             </Table>
                         </div>
                     )}

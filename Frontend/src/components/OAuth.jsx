@@ -6,11 +6,12 @@ import { AiFillGoogleCircle } from 'react-icons/ai'
 import { IoCloseCircleOutline } from "react-icons/io5"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 
-import { useDispatch } from'react-redux'
+import { useDispatch, useSelector } from'react-redux'
 import { oAuth } from '../store/userSlice.js'
  
   const OAuth = (props) => {
     const dispatch = useDispatch()  
+    const { status } = useSelector(state=>state.user)
     const [successMessage, setSuccessMessage] = useState('') 
     const [errorMessage, setErrorMessage] = useState('') 
     const [btnDisable, setBtnDisable] = useState('')
@@ -21,26 +22,18 @@ import { oAuth } from '../store/userSlice.js'
         provider.setCustomParameters({ prompt: 'select_account' })
     
         try {
-            // setErrorMessage('')
-            // setSuccessMessage('')
             props.getSignUpError("")
             props.getSignUpSuccess("")
             setBtnDisable('disabled')
             props.getAuthBtnDisabled('disabled')
             const resultFromGoogle = await signInWithPopup(auth, provider)
             const userData = resultFromGoogle._tokenResponse
-            dispatch(oAuth(userData))
-            .then((data) => {
-                // setSuccessMessage(data.payload.message)
-                props.getSignUpSuccess(data.payload.message)
-            })
-            .catch((error) => {
-                // setErrorMessage(error)
-                props.getSignUpError(error)
-            })
+            const responseData = await dispatch(oAuth(userData))
+            if (responseData?.error) props.getSignUpError(responseData?.error.message)
+            else props.getSignUpSuccess(responseData.payload.message)
+
             setBtnDisable('')
         } catch (error) {
-            console.error(error)
             if (error.message.includes('popup-closed-by-user')) props.getSignUpError('Error! Please try again.')
             else if (error.message.includes('unauthorized-domain')) props.getSignUpError('Access denied! Please try again later.')
             else props.getSignUpError('Error! Please check your internet connection and try again.')
@@ -51,8 +44,8 @@ import { oAuth } from '../store/userSlice.js'
 
     return ( 
         <>
-            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} disabled={ btnDisable === "disabled" } >
-                {btnDisable === "disabled" 
+            <Button gradientDuoTone="pinkToOrange" outline type='button' onClick={handleGoogleClick} disabled={ btnDisable === "disabled" || status == "loading" } >
+                {btnDisable === "disabled"
                 ? <Spinner />
                 : (
                     <>

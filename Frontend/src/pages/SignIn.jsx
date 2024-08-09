@@ -14,6 +14,7 @@ const SignIn = () => {
 
   const dispatch = useDispatch()
   const {theme} = useSelector(state=>state.theme)
+  const {status} = useSelector(state=>state.user)
   const [errorMessage , setErrorMessage] = useState(null)
   const [authBtnDisabled, setAuthBtnDisabled] = useState("")
 
@@ -112,7 +113,8 @@ const SignIn = () => {
                     !loginFormik.isValid ||    // Disable when form is invalid
                     !loginFormik.dirty ||      // Disable when form has no changes
                     Object.values(loginFormik.values).some(value => !value.trim()) ||    // Disable when any field is empty
-                    authBtnDisabled === 'disabled'
+                    authBtnDisabled === 'disabled' ||
+                    status == "disabled"
                   }
                 >
                   {loginFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Sign In" }    
