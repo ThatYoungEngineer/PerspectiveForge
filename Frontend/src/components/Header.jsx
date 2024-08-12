@@ -26,7 +26,7 @@ const Header = () => {
 
     return (
     <>
-        <Navbar fluid rounded border >
+        <Navbar fluid rounded border className="relative z-20 bg-transparent dark:bg-transparent" >
             <Navbar.Brand onClick={() => navigate('/')} className="w-24 md:w-44" >
                 {theme === 'light' 
                     ? <img src={logo} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 

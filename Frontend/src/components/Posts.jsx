@@ -20,17 +20,17 @@ const Posts = () => {
   const [hideShowMore, setHideShowMore] = useState(false)
 
   useEffect(() => {
+
     if ( currentUser.userData.isAdmin) {
       if (!post || post.length === 0) {
         dispatch(getPosts())
       }
     }
-    console.log('totalPosts: ', totalPostsFromServer?.totalPosts)
-    console.log('postsIndex: ', postsIndex)
-
+    
     if (totalPostsFromServer <= postsIndex) {
       setHideShowMore(true)
     }
+
   }, [post])
 
   console.log(hideShowMore)
