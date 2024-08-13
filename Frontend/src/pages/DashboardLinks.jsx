@@ -24,7 +24,9 @@ const DashboardLinks = () => {
     } else {
       setDash(false)
     }
-  }, [location.search, location.pathname]);
+  }, [location.search, location.pathname])
+
+  console.log("dashboard run ")
 
   return (
     <div className="w-full min-h-screen flex">

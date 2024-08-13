@@ -1,5 +1,5 @@
 import { Navbar, Button, Dropdown, Avatar } from "flowbite-react"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, Link, useLocation } from "react-router-dom"
 import { FaMoon, FaSun } from 'react-icons/fa'
 import { HiLogout } from "react-icons/hi"
 
@@ -10,7 +10,7 @@ import { toggleTheme } from "../store/themeSlice"
 import { signOut } from "../store/userSlice"
 
 const Header = () => {
-
+    const location = useLocation()
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { currentUser } = useSelector(state=>state.user)
@@ -26,11 +26,11 @@ const Header = () => {
 
     return (
     <>
-        <Navbar fluid rounded border className="relative z-20 bg-transparent dark:bg-transparent" >
+        <Navbar fluid rounded border={location.pathname !== '/'} className="relative z-40 bg-transparent dark:bg-transparent" >
             <Navbar.Brand onClick={() => navigate('/')} className="w-24 md:w-44" >
                 {theme === 'light' 
-                    ? <img src={logo} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
-                    : <img src={logoLight} className="w-24 md:w-44 cursor-pointer" alt="logo" /> 
+                    ? <img src={logo} className="w-24 md:w-44 object-center cursor-pointer" alt="logo" /> 
+                    : <img src={logoLight} className="w-24 md:w-44 object-center cursor-pointer" alt="logo" /> 
                 }
             </Navbar.Brand>
             <div className="flex gap-3 md:order-2 items-center justify-end w-24 md:w-44 ">
@@ -73,34 +73,33 @@ const Header = () => {
                         <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>Sign Out</Dropdown.Item>
                     </Dropdown>
                 :   <Link to={'/login'} >
-                        <Button outline gradientDuoTone="purpleToBlue">
+                        <Button outline gradientDuoTone="purpleToBlue" className="h-10 md:h-full">
                             Login
                         </Button>
                     </Link> 
                 }
                 { currentUser?.userData && <Navbar.Toggle /> }
             </div>
-            {currentUser?.userData && 
-                <>
-                    <Navbar.Collapse>
-                        <div className="w-full sm:hidden flex items-center justify-center">
-                            <Button
-                                className='w-12 h-10 flex items-center justify-center mb-5'
-                                color='gray'
-                                pill
-                                onClick={handleThemeChange}
-                            >
-                                { theme === 'light' ? <FaMoon /> : <FaSun /> }
-                            </Button>
-                        </div>
-                        <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-5">
-                            <Link to={'/'}> Home </Link>
-                            <Link to={'/'}> About </Link>
-                            <Link to={'/'}> Services </Link>
-                            <Link to={'/'}> Pricing </Link>
-                            <Link to={'/'}> Contact </Link>
-                        </div>
-                        <div className="mt-5 w-full sm:hidden flex items-center justify-center">
+            <Navbar.Collapse>
+                <div className="w-full sm:hidden flex items-center justify-center">
+                    <Button
+                        className='w-12 h-10 flex items-center justify-center mb-5'
+                        color='gray'
+                        pill
+                        onClick={handleThemeChange}
+                    >
+                        { theme === 'light' ? <FaMoon /> : <FaSun /> }
+                    </Button>
+                </div>
+                <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-12 text-base">
+                    <Link to={'/'}> Home </Link>
+                    <Link to={'/'}> About </Link>
+                    <Link to={'/'}> Services </Link>
+                    <Link to={'/'}> Pricing </Link>
+                    <Link to={'/'}> Contact </Link>
+                </div>
+                {currentUser?.userData && 
+                    <div className="mt-5 w-full sm:hidden flex items-center justify-center">
                         <Button
                             outline
                             gradientDuoTone='purpleToPink'
@@ -109,10 +108,9 @@ const Header = () => {
                         >
                             Sign Out
                         </Button>
-                        </div>
-                    </Navbar.Collapse>
-                </>
-            }
+                    </div>
+                }
+            </Navbar.Collapse>
         </Navbar>    
     </>
   )

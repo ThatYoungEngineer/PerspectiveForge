@@ -12,8 +12,8 @@ const Home = () => {
   // console.log(checkType)
 
   return (
-    <div className="w-screen min-h-[92vh] flex flex-col justify-between">
-      <Hero />
+    <div className="w-screen h-[200vh] flex flex-col justify-between">
+        <Hero />
     </div>
   )
 

@@ -10,6 +10,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'md-mobile' : '350px'
+      },  
       fontFamily: {
         'Onest-Bold' : ['Onest-Bold', 'sans-serif'],
         'Onest-SemiBold' : ['Onest-SemiBold', 'sans-serif'],
@@ -17,6 +20,10 @@ export default {
         'Onest-Regular' : ['Onest-Regular', 'sans-serif'],
         'Onest-Light' : ['Onest-Light', 'sans-serif'],
         'Onest-Thin' : ['Onest-Thin', 'sans-serif'],
+      },
+      backgroundImage: {
+        "hero-bg" : "url(/src/assets/images/bg-hero.png)",
+        "btn-bg" : "url(/src/assets/images/btnBg.png)"
       }
     },
   },

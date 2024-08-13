@@ -52,3 +52,20 @@ body {
 .ql-editor {
     font-size: 1rem;
 }
+
+
+.newFeatureShadow {      
+    box-shadow: 0px -0px 2px 3px #196164d5;
+}
+
+.headingGradient {
+    background: -webkit-linear-gradient(#ffffff7f, #ffffffdc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.contentGradient {
+    background: -webkit-linear-gradient(#ffffffcb, #ffffff78);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
