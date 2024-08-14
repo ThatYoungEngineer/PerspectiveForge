@@ -94,9 +94,9 @@ export const deletePost = async (req, res) => {
         return res.status(403).json({message: 'You do not have permission to delete this post.'})
     }
     try {
-        const postToDelete = await Post.findOneAndDelete({_id: req.body._id}) 
+        const postToDelete = await Post.findOneAndDelete({_id: req.params.postId}) 
         if (!postToDelete) return res.status(404).json({ message: "Post not found" })
-        else res.status(200).json({ message: "Post deleted successfully" })
+        else res.status(200).json({ message: "Post deleted successfully", postId: req.params.postId })
     } catch (error) {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})     

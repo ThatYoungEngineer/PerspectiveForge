@@ -26,8 +26,6 @@ const DashboardLinks = () => {
     }
   }, [location.search, location.pathname])
 
-  console.log("dashboard run ")
-
   return (
     <div className="w-full min-h-screen flex">
       <aside className="hidden lg:block">

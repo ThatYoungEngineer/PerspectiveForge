@@ -53,7 +53,6 @@ export const getPosts = createAsyncThunk(
 export const showMorePosts = createAsyncThunk(
     'post/get-posts?startIndex',
     async (startIndex) => {
-        console.log(startIndex)
         try {
             const res = await fetch(`/api/post/get-posts?startIndex=${startIndex}`, {
                 method: 'GET',
@@ -67,6 +66,27 @@ export const showMorePosts = createAsyncThunk(
             }
         } catch (error) {
             throw error.message
+        }
+    }
+)
+
+export const deletePost = createAsyncThunk(
+    'post/delete/:postId',
+    async (postId) => {
+        try {
+            const res = await fetch(`/api/post/delete/${postId}` , {
+                method: 'DELETE',
+                body: JSON.stringify(postId)
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.message)
+            } else {
+                const data = await res.json()
+                return data
+            }
+        } catch (error) {
+            throw error.message   
         }
     }
 )
@@ -110,6 +130,12 @@ const postSlice = createSlice({
         .addCase(showMorePosts.rejected, (state, action) => {
             state.status = 'error'
             state.error = action.error.message
+        }),
+        builder
+        .addCase(deletePost.fulfilled, (state, action) => {
+            state.status = 'fulfilled'
+            state.post = [[...state.post[0].filter((p) => p._id !== action.payload.postId)], state.post[1]];
+            state.error = null
         })
 
     }

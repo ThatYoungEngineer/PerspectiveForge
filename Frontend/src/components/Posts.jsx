@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from "react-redux"
-import { getPosts, showMorePosts } from "../store/postSlice"
+import { getPosts, showMorePosts, deletePost } from "../store/postSlice"
 import { useEffect, useState, memo } from "react"
-import { Spinner, Alert, Table } from "flowbite-react"
+import { Spinner, Alert, Table, Button } from "flowbite-react"
 import { GoPencil, GoAlertFill, GoTrash } from "react-icons/go"
 import { FaRegEye } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import Modal from '../helpers/Modal'
+import { RiAlertFill } from "react-icons/ri"
 
 const Posts = () => {
   const dispatch = useDispatch()
@@ -18,23 +20,19 @@ const Posts = () => {
   const [showMore, setShowMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const [hideShowMore, setHideShowMore] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [postToBeDeleted, setPostToBeDeleted] = useState(null)
 
   useEffect(() => {
-
     if ( currentUser.userData.isAdmin) {
       if (!post || post.length === 0) {
         dispatch(getPosts())
       }
     }
-    
     if (totalPostsFromServer <= postsIndex) {
       setHideShowMore(true)
     }
-
   }, [post])
-
-  console.log(hideShowMore)
-
 
   const handleShowMore = () => {
     setLoading(true)
@@ -44,6 +42,22 @@ const Posts = () => {
       setLoading(false)
       setShowMore(true)
     })
+  }
+
+  const openModalMethod = (post) => {
+    setPostToBeDeleted(post)
+    setOpenModal(true)
+  }
+  const deletePostById = (postId) => {
+    dispatch(deletePost(postId))
+    .then((data) => {
+      console.log(data?.payload?.message)
+      setOpenModal(false)
+    })
+  }
+
+  const handleModal = (toggle) => {
+    setOpenModal(toggle)
   }
 
   return (
@@ -74,7 +88,7 @@ const Posts = () => {
                                     <Table.HeadCell className="w-1/6 whitespace-nowrap">Category</Table.HeadCell>
                                     <Table.HeadCell className="w-1/6 whitespace-nowrap">Actions</Table.HeadCell>
                                 </Table.Head>
-                                {postsArray.map((p) => (
+                                {postsArray?.map((p) => (
                                     <Table.Body key={p._id} className="divide-y" >
                                         <Table.Row className="w-full">
                                             <Table.Cell className="w-1/6 whitespace-nowrap">
@@ -95,7 +109,7 @@ const Posts = () => {
                                                 <Link to={`/update-post/${post._id}`}>
                                                   <div className="ActionButtonBG"> <GoPencil size={15} /> </div>
                                                 </Link>
-                                                <div className="ActionButtonBG"> <GoTrash size={15} color="red" /> </div>
+                                                <div className="ActionButtonBG" onClick={()=>openModalMethod(p)}> <GoTrash size={15} color="red" /> </div>
                                               </div>    
                                             </Table.Cell>
                                         </Table.Row>
@@ -117,17 +131,32 @@ const Posts = () => {
                                             Show more
                                           </div>
                                         )}
-
                                         </Table.Cell>
                                       </Table.Row>
                                     </Table.Body>
-      }
+                      }
                             </Table>
                         </div>
                     )}
                 </>  
             : <p className="mx-auto text-base">No posts found.</p>
             }
+            <Modal isOpen={openModal} handleClose={() => handleModal(false)}  >
+              <section className="w-full h-full flex flex-col gap-14 items-center justify-center">
+                <h2 className="text-xl md:text-2xl italic font-Onest-Bold">"{postToBeDeleted?.title}"</h2>
+                <div className="flex flex-col gap-2 items-center justify-center">
+                  <h2 className="text-lg md:text-xl font-Onest-Regular">Are you sure you want to delete this post?</h2>
+                  <Alert icon={RiAlertFill}>
+                    This change is irreversible!
+                  </Alert>
+                </div>
+                <section className="flex gap-4 items-center">
+                  <Button color='red' className="px-10" onClick={()=>deletePostById(postToBeDeleted?._id)} >Delete</Button>
+                  <Button onClick={() => handleModal(false)}>Cancel</Button>
+                </section>
+              </section>
+            </Modal>
+
         </>
   )
 }

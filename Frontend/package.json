@@ -19,6 +19,7 @@
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.8.0",
     "formik": "^2.4.5",
+    "framer-motion": "^11.3.27",
     "jwt-decode": "^4.0.0",
     "quill": "^2.0.2",
     "react": "^18.2.0",
@@ -30,6 +31,7 @@
     "react-router-dom": "^6.22.3",
     "redux-persist": "^6.0.0",
     "redux-persist-transform-encrypt": "^5.1.1",
+    "styled-components": "^6.1.12",
     "sweetalert2": "^11.10.8",
     "yup": "^1.4.0"
   },
