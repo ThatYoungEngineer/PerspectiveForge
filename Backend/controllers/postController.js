@@ -78,19 +78,27 @@ export const getPosts = async (req, res) => {
             createdAt: { $gte: oneMonthAgo }
         })
 
-        // res.status(200).json([{
-        //     posts: posts,
-        //     totalPosts: totalPosts,
-        //     lastMonthPosts: lastMonthPosts
-        // }])  
         res.status(200).json([posts, {
             totalPosts,
             lastMonthPosts
         }])  
 
     } catch (error) {
-        console.log(error.message)
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})    
+    }
+}
+
+export const deletePost = async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({message: 'You do not have permission to delete this post.'})
+    }
+    try {
+        const postToDelete = await Post.findOneAndDelete({_id: req.body._id}) 
+        if (!postToDelete) return res.status(404).json({ message: "Post not found" })
+        else res.status(200).json({ message: "Post deleted successfully" })
+    } catch (error) {
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
+        else res.status(500).json({ message: "Internal Server Error"})     
     }
 }
