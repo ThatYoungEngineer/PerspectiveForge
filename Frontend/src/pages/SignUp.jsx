@@ -10,7 +10,8 @@ import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux" 
 import { signUpUser } from "../store/userSlice"
 import OAuth from "../components/OAuth"
-
+import { FaQuoteRight } from "react-icons/fa6"
+import { FaQuoteLeft } from "react-icons/fa6"
 
 const SignUp = () => {    
     const dispatch = useDispatch()
@@ -90,7 +91,7 @@ const SignUp = () => {
                     ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 
                     : <img src={logoLight} className=" w-44 cursor-pointer" alt="logo" /> 
                 }
-                <h2 className="text-sm"> &quot;Crafting Perspectives, Shaping Minds&quot; </h2>
+                <h2 className="text-sm tracking-wide flex"> <FaQuoteLeft size={10} /> Crafting Perspectives, Shaping Minds <FaQuoteRight size={10} /> </h2>
             </div>
             <div className="w-full p-10 md:w-1/2 md:p-20 FlexCenter">
                 <form onSubmit={signUpFormik.handleSubmit} noValidate className="flex w-full md:max-w-md flex-col gap-4">

@@ -33,9 +33,9 @@ const Header = () => {
                     : <img src={logoLight} className="w-24 md:w-44 object-center cursor-pointer" alt="logo" /> 
                 }
             </Navbar.Brand>
-            <div className="flex gap-3 md:order-2 items-center justify-end w-24 md:w-44 ">
+            <div className="flex gap-3 md:order-2 items-center justify-end w-24 md:w-44">
                 <Button
-                    className='w-12 h-10 hidden lg:flex items-center justify-center'
+                    className={`w-12 h-10 ${currentUser?.userData && 'hidden'} md:flex items-center justify-center`}
                     color='gray'
                     pill
                     onClick={handleThemeChange}
@@ -91,11 +91,9 @@ const Header = () => {
                         { theme === 'light' ? <FaMoon /> : <FaSun /> }
                     </Button>
                 </div>
-                <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-12 text-base">
+                <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-10 text-base">
                     <Link to={'/'}> Home </Link>
                     <Link to={'/'}> About </Link>
-                    <Link to={'/'}> Services </Link>
-                    <Link to={'/'}> Pricing </Link>
                     <Link to={'/'}> Contact </Link>
                 </div>
                 {currentUser?.userData && 
