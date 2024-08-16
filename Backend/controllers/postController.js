@@ -102,3 +102,28 @@ export const deletePost = async (req, res) => {
         else res.status(500).json({ message: "Internal Server Error"})     
     }
 }
+
+export const updatePost = async (req, res) => {
+    if (!req.user.isAdmin) {
+        return res.status(403).json({ message: "You are not allowed to update this post." })
+    }
+    try {
+        const postToBeUpdated = await Post.findOneAndUpdate({ _id: req.params.postId }, {
+            $set: {
+                title: req.body.title,
+                category: req.body.category,
+                image: req.body.blogImage,
+                description: req.body.description
+            }}, { new: true }
+        )
+        if (!postToBeUpdated) {
+            return res.status(403).json({ message: "Post with this id does not exist." })
+        } else {
+            return res.status(200).json({ message: "Post updated successfully." })
+        }
+    } catch (error) {
+        console.log('ye error aarha hai: ', error)
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
+        else res.status(500).json({ message: "Internal Server Error"})         
+    }
+}

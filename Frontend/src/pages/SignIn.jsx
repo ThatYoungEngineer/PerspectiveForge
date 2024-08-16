@@ -48,7 +48,7 @@ const SignIn = () => {
         await dispatch(signInUser(userData))
         .then((data) => data.error?.message && setErrorMessage(data.error.message))
       } catch (error) {
-        console.error("error: ", error)
+        console.log("error: ", error)
         setErrorMessage(error)  
       }
     }
@@ -67,7 +67,7 @@ const SignIn = () => {
 
   return (
     <>
-      <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
+      <section className="w-full md:min-h-[89vh] h-[600px] flex items-center justify-center">
         <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col bg-green-50 dark:bg-[rgb(28,37,61)] `}>
           {theme === 'light' 
             ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 

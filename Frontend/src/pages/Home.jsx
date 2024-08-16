@@ -2,6 +2,7 @@ import underConstruction from "../assets/images/under-construction.webp"
 import { useSelector } from "react-redux"
 import Header from '../components/Header'
 import Hero from '../components/Hero'
+import RecentPosts from "../components/RecentPosts"
 
 const Home = () => {
   // const {currentUser} = useSelector((state) => state.user)
@@ -12,8 +13,11 @@ const Home = () => {
   // console.log(checkType)
 
   return (
-    <div className="w-screen h-[200vh] flex flex-col justify-between">
+    <div className="w-screen flex flex-col">
+      <div className="w-screen min-h-[650px] h-screen max-h-[950px]">
         <Hero />
+      </div>
+      <RecentPosts />
     </div>
   )
 

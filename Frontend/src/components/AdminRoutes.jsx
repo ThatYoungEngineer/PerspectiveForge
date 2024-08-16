@@ -5,7 +5,7 @@ const PrivateRoutes = () => {
     
     const { currentUser } = useSelector(state=>state.user)
 
-    return currentUser.userData.isAdmin ? <Outlet /> : <Navigate to={'/'} />
+    return currentUser.userData.isAdmin ? <Outlet /> : <Navigate to={'/dashboard'} />
 }
 
 export default PrivateRoutes

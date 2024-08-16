@@ -91,6 +91,31 @@ export const deletePost = createAsyncThunk(
     }
 )
 
+export const updatePost = createAsyncThunk(
+    'post/update/:postId',
+    async (data) => {
+        try {
+            const res = await fetch(`/api/post/update-post/${data.postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                console.log('not okay res data: ', data)
+                throw new Error(data.message)
+            } else {
+                const data = await res.json()
+                return data
+            }
+        } catch (error) {
+            throw error.message
+        }
+    }
+)
+
 const postSlice = createSlice({
     name: 'post',
     initialState,

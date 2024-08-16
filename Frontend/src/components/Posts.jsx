@@ -72,7 +72,7 @@ const Posts = () => {
 
                     {status === 'error' && (
                         <div className="w-full h-[85%] flex items-center justify-center">
-                            <Alert color='failure' icon={GoAlertFill} className="w-full px-10">
+                            <Alert color='failure' icon={GoAlertFill} className="w-fit px-10">
                               {error}
                             </Alert>
                         </div>
@@ -103,10 +103,10 @@ const Posts = () => {
                                             <Table.Cell className="w-1/6 whitespace-nowrap" > {p.category} </Table.Cell>
                                             <Table.Cell className="w-1/6 whitespace-nowrap" > 
                                               <div className="flex items-center" >
-                                                <Link to={`/post/${p.slug}`}>
+                                                <Link to={`/posts/${p.slug}`}>
                                                   <div className="ActionButtonBG"> <FaRegEye size={15} /> </div>
                                                 </Link>
-                                                <Link to={`/update-post/${post._id}`}>
+                                                <Link to={`/dashboard/update-post/${p._id}`}>
                                                   <div className="ActionButtonBG"> <GoPencil size={15} /> </div>
                                                 </Link>
                                                 <div className="ActionButtonBG" onClick={()=>openModalMethod(p)}> <GoTrash size={15} color="red" /> </div>

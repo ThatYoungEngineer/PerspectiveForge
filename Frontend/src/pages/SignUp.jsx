@@ -85,7 +85,7 @@ const SignUp = () => {
 
   return (
     <>
-        <section className="w-full md:min-h-[90vh] h-[600px] flex items-center justify-center">
+        <section className="w-full md:min-h-[89vh] h-[600px] flex items-center justify-center">
             <div className={`w-1/2 h-full hidden md:FlexCenter gap-2 flex-col ${theme==='light'? 'bg-green-50': 'bg-[rgb(28,37,61)]'}`}>
                 {theme === 'light' 
                     ? <img src={logo} className=" w-44 cursor-pointer" alt="logo" /> 

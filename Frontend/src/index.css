@@ -60,7 +60,7 @@ body {
 
 .headingGradient {
     background: -webkit-linear-gradient(#ffffff7f, #ffffffdc);
-    background-color: orange !important;
+    background-color: #ffa500 !important;
 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

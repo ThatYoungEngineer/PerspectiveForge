@@ -14,7 +14,7 @@ import CreatePost from "./components/CreatePost"
 import RestoreScroll from "./components/RestoreScroll"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
-
+import UpdatePost from "./components/UpdatePost"
 
 const App = () => {
 
@@ -49,9 +49,10 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route element={<PrivateRoutes />} >
           <Route path="/dashboard" element={<DashboardLinks />} />
-        </Route>
-        <Route element={<AdminRoutes />}>
-          <Route path="/dashboard?tab=create-new-post" element={<CreatePost />} />
+          <Route element={<AdminRoutes />}>
+            <Route path="/dashboard?tab=create-new-post" element={<CreatePost />} />
+            <Route path="/dashboard/update-post/:postId" element={<UpdatePost />} />
+          </Route>
         </Route>
       </Routes>
       <Footer />
