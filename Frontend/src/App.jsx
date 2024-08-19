@@ -15,6 +15,8 @@ import RestoreScroll from "./components/RestoreScroll"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import UpdatePost from "./components/UpdatePost"
+import Posts from "./pages/Posts"
+import Post from "./pages/Post"
 
 const App = () => {
 
@@ -41,7 +43,9 @@ const App = () => {
       <RestoreScroll />
       <Header />
       <Routes>
-        <Route path="/" exact element={<Home />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/posts" element={<Posts />} />
+        <Route path="/posts/:slug" element={<Post />} />
         <Route element={<AuthRoutes />} >
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<SignIn />} />

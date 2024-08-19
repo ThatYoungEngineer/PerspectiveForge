@@ -3,7 +3,7 @@ import MemoizedProfile from "../components/Profile";
 import { useLocation } from "react-router";
 import { useState, useEffect } from "react";
 import CreatePost from "../components/CreatePost";
-import Posts from "../components/Posts";
+import DashboardPosts from "../components/DashboardPosts";
 import UpdatePost from "../components/UpdatePost"
 import DashboardMemo from "../components/Dashboard";
 
@@ -38,7 +38,7 @@ const DashboardLinks = () => {
         {dash && <DashboardMemo />}
         {tab === "profile" && <MemoizedProfile />}
         {tab === "create-new-post" && <CreatePost />}
-        {tab === "posts" && <Posts />}
+        {tab === "posts" && <DashboardPosts />}
       </section>
     </div>
   );

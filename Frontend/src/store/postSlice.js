@@ -70,6 +70,26 @@ export const showMorePosts = createAsyncThunk(
     }
 )
 
+export const getPostBySlug = createAsyncThunk(
+    'post/get-posts/:slug',
+    async (slug) => {
+        try {
+            const res = await fetch(`/api/post/get-posts?slug=${slug}`, {
+                method: 'GET',
+            })
+            if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.message)
+            } else {
+                const data = await res.json()
+                return data
+            }
+        } catch (error) {
+            throw error.message
+        }
+    }
+)
+
 export const deletePost = createAsyncThunk(
     'post/delete/:postId',
     async (postId) => {
@@ -115,6 +135,7 @@ export const updatePost = createAsyncThunk(
         }
     }
 )
+
 
 const postSlice = createSlice({
     name: 'post',
