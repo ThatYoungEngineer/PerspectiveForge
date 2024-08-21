@@ -7,10 +7,10 @@
       @apply flex items-center justify-center
     }
     .ActionButtonBG {
-        @apply bg-transparent bg-opacity-50 w-7 h-7 FlexCenter rounded-full hover:bg-slate-200 transition-all ease-in-out
+        @apply bg-transparent bg-opacity-50 w-7 h-7 FlexCenter rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-all ease-in-out
         duration-200 cursor-pointer
     }
-  }
+}
 
 @font-face {
     font-family: Onest-Bold;
@@ -53,7 +53,6 @@ body {
     font-size: 1rem;
 }
 
-
 .newFeatureShadow {      
     box-shadow: 0px -0px 2px 3px #2f898dd5;
 }
@@ -81,4 +80,48 @@ body {
     background: -webkit-linear-gradient(#000000cb, #00000078); 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.post-content p {
+    margin-top: .5rem;
+}
+.post-content h1 {
+    font-size: 1.6rem;
+    font-family: Onest-Bold;
+    margin-top: 1rem;
+}
+.post-content h2 {
+    font-size: 1.3rem;
+    font-family: Onest-SemiBold;
+    margin-top: 1rem;
+}
+
+.post-content a {
+    text-decoration: none;
+    color: turquoise !important;
+    transition: all ease-in-out 100ms;
+    &:hover {
+        color: rgb(5, 190, 171) !important;
+        text-decoration: underline;
+    }
+}
+
+.post-content pre {
+    font-family: 'Courier New', Courier, monospace;
+    color: #ffa500 !important;
+    margin-top: 1rem;
+    padding: .8rem;
+    width: 100%;
+    background-color: #23241f;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 8px;
+    line-height: 2rem;
+}
+
+.post-content code {
+    font-family: Onest-Regular;
+}
+
+.dark .post-content code {
+    background-color: gray !important;
 }

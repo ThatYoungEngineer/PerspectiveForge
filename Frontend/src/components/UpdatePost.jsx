@@ -90,10 +90,11 @@ const UpdatePost = () => {
         try{
             if (image?.type.includes('image/')) {
                 if (image.size < 2097152) {              //  Greater than 2MB
-                    setImageFile(image)
-                    setImageFileURL(URL.createObjectURL(image))
-                    createPostFormik.setFieldValue("blogImage", URL.createObjectURL(file))
-                    createPostFormik.setFieldTouched("blogImage", true, true);
+                    const imageURL = URL.createObjectURL(image);
+                    setImageFile(image);
+                    setImageFileURL(imageURL);
+                    updatePostFormik.setFieldValue("blogImage", imageURL);  // Set the image URL in the form
+                    updatePostFormik.setFieldTouched("blogImage", true)
                 } else setImageFileError('Failure. Image must be less than 2MB!')
             } else setImageFileError('Failure. File type must be an image!')
         } catch(e) {return}
@@ -152,7 +153,7 @@ const UpdatePost = () => {
         .required("Category is required"),
     })
 
-    const createPostFormik = useFormik({
+    const updatePostFormik = useFormik({
         enableReinitialize: true,
         initialValues: {
           title: postData?.title,
@@ -196,11 +197,9 @@ const UpdatePost = () => {
             } catch (error) {
                 setError('There is an error, while processing your request')
                 console.log('There is an error, while processing your request: ', error)
-            }            
+            }       
         }
     })
-
-    console.log('this is image file: ', imageFile)
 
     return loadingData 
     ?   <div className="w-screen h-[90vh] FlexCenter">
@@ -221,23 +220,23 @@ const UpdatePost = () => {
     :
     <div className=" w-full h-fit flex flex-col gap-10 items-center xl:p-20 py-10">
         <h1 className="text-center text-4xl font-semibold">Update Post.</h1>
-        <form onSubmit={createPostFormik.handleSubmit} className="w-[90vw] md:w-full max-w-3xl flex flex-col gap-5">
+        <form onSubmit={updatePostFormik.handleSubmit} className="w-[90vw] md:w-full max-w-3xl flex flex-col gap-5">
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                     <TextInput type="text" id="title" name="title" className="w-full" placeholder="Title" 
                     defaultValue={postData?.title}
-                    // value={createPostFormik.title} 
-                    onBlur={createPostFormik.handleBlur}
-                    onChange={createPostFormik.handleChange} 
+                    // value={updatePostFormik.title} 
+                    onBlur={updatePostFormik.handleBlur}
+                    onChange={updatePostFormik.handleChange} 
                     />
-                    {(createPostFormik.touched.title && createPostFormik.errors.title) && <p className='mt-1 text-xs text-red-600'>{createPostFormik.errors.title}</p>}
+                    {(updatePostFormik.touched.title && updatePostFormik.errors.title) && <p className='mt-1 text-xs text-red-600'>{updatePostFormik.errors.title}</p>}
                 </div>
                 <div className='flex flex-col'>
                     <Select style={{cursor: 'pointer'}} as='select' name='category'
                         defaultValue={postData?.category}
-                        // value={createPostFormik.values.category}
-                        onBlur={createPostFormik.handleBlur}
-                        onChange={createPostFormik.handleChange}                                         
+                        // value={updatePostFormik.values.category}
+                        onBlur={updatePostFormik.handleBlur}
+                        onChange={updatePostFormik.handleChange}                                         
                     >
                         {options.map( (option, index) => (
                             <option 
@@ -250,7 +249,7 @@ const UpdatePost = () => {
                             </option>
                         ))}
                     </Select>  
-                    {(createPostFormik.touched.category && createPostFormik.errors.category) && <p className='mt-1 text-xs text-red-600'>{createPostFormik.errors.category}</p>}
+                    {(updatePostFormik.touched.category && updatePostFormik.errors.category) && <p className='mt-1 text-xs text-red-600'>{updatePostFormik.errors.category}</p>}
                 </div>
             </div>
             <div className="p-3 border-4 border-dotted border-teal-400 flex flex-col gap-3 md:flex-row md:items-center justify-between">
@@ -272,12 +271,12 @@ const UpdatePost = () => {
                     <p>{imageFileUploadError}</p>
                 </Alert> 
             }
-            {(createPostFormik.values.blogImage !== '' || imageFileURL) && 
+            {(updatePostFormik.values.blogImage !== '' || imageFileURL) && 
                 <img 
-                    src={imageFileURL || createPostFormik.values.blogImage } alt='blog-image'
-                    className={`border-2 border-teal-400
+                    src={imageFileURL || updatePostFormik.values.blogImage } alt='blog-image'
+                    className={`border-2 border-teal-400 h-[450px] object-cover
                     ${(imageUploadingProgress && imageUploadingProgress < 100) && 'opacity-40 cursor-not-allowed'}
-                    ${(createPostFormik.isSubmitting || status === 'loading') && 'opacity-40 cursor-not-allowed'}`}
+                    ${(updatePostFormik.isSubmitting || status === 'loading') && 'opacity-40 cursor-not-allowed'}`}
                 />
             }
             <div className='relative'>
@@ -286,27 +285,28 @@ const UpdatePost = () => {
                     theme="snow"
                     placeholder="Write post description.. (Must be atleast 200 characters)"
                     className="h-80" 
-                    value={createPostFormik.values.description}
+                    value={updatePostFormik.values.description}
                     onBlur={() => {
-                        createPostFormik.setFieldTouched('description', true)
+                        updatePostFormik.setFieldTouched('description', true)
                     }}
                     onChange={(value) => {
-                        createPostFormik.setFieldValue('description', value);
+                        updatePostFormik.setFieldValue('description', value);
                     }}
                 />
-                {(createPostFormik.touched.description && createPostFormik.errors.description) && <p className='mt-1 text-xs text-red-600 absolute left-0 -bottom-16'>{createPostFormik.errors.description}</p>}
+                {(updatePostFormik.touched.description && updatePostFormik.errors.description) && <p className='mt-1 text-xs text-red-600 absolute left-0 -bottom-16'>{updatePostFormik.errors.description}</p>}
             </div>
             <Button
                 type="submit"
                 gradientDuoTone='purpleToPink'
                 className="mt-[10vh] md:mt-[7vh]"
                 disabled={
-                    createPostFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
-                    !createPostFormik.isValid ||                                // Disable when form is invalid
-                    !imageFile                                     // Disable when form has no changes
+                    updatePostFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
+                    !updatePostFormik.isValid ||                               // Disable when form is invalid
+                    !updatePostFormik.dirty ||                                // Disable when form has no changes
+                    success || error
                 }
-                >
-                {status === 'loading' || createPostFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Publish" }    
+            >
+                {status === 'loading' || updatePostFormik.isSubmitting ?  <Spinner /> : "Update" }    
             </Button>
             {success && 
                 <Alert  color="success" icon={IoIosCheckmarkCircleOutline}>

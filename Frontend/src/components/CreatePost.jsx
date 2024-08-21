@@ -220,7 +220,7 @@ const CreatePost = () => {
             {imageFileURL && 
                 <img 
                     src={imageFileURL} alt="selected-image" 
-                    className={`border-2 border-teal-400 aspect-[4/4]
+                    className={`border-2 border-teal-400
                     ${(imageUploadingProgress && imageUploadingProgress < 100) && 'opacity-40 cursor-not-allowed'}
                     ${(createPostFormik.isSubmitting || status === 'loading') && 'opacity-40 cursor-not-allowed'}`}
                 />
