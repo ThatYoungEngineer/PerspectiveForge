@@ -5,6 +5,9 @@ import { signOut } from "../store/userSlice"
 import { Link, useLocation } from "react-router-dom"
 import { MdDashboard } from "react-icons/md"
 import { useEffect, useState } from "react"
+import { FaAngleDown } from "react-icons/fa"
+import { IoCreate } from "react-icons/io5"
+import { MdOutlineManageSearch } from "react-icons/md"
 
 const Sidebar = () => {
     const [tab, setTab] = useState(null)
@@ -48,15 +51,25 @@ const Sidebar = () => {
                     </FlowbiteSidebar.Item>
                 </Link>
                 {currentUser.userData.isAdmin &&
-                    <Link to={'/dashboard?tab=posts'}>
+                    <>
                         <FlowbiteSidebar.Item
                             icon={HiDocumentText}
                             active={tab=='posts'||tab=='create-new-post'}
                             as='div'
+                            className="relative"
                         >
                             Posts
+                            <FaAngleDown className="absolute transform top-1/2 -translate-y-1/2 right-3" />
                         </FlowbiteSidebar.Item>
-                    </Link>
+                        <div className="w-full h-20 flex flex-col gap-5 pl-8">
+                            <Link to='/dashboard?tab=create-new-post' className="flex"> 
+                                <IoCreate className="self-center mr-2" size={20} /> Create Post
+                             </Link>
+                            <Link to='/dashboard?tab=posts' className="flex">
+                                <MdOutlineManageSearch className="self-center mr-2" size={20}/> Manage Post 
+                            </Link>
+                        </div>
+                    </>
                 }
                 <FlowbiteSidebar.Item icon={HiArrowRight} className='cursor-pointer' onClick={handleSignOut} >
                     Sign Out 

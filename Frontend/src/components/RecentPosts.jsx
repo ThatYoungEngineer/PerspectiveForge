@@ -41,7 +41,7 @@ const RecentPosts = () => {
           :  
             <>
               <section className="w-full max-w-[1600px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                {postsData?.map(p => (
+                {postsData?.slice(0, 6).map(p => (
                   <Link to={`/posts/${p.slug}`} key={p._id}>
                     <PostCard
                       image = {p.image}
