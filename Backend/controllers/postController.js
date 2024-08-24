@@ -18,6 +18,8 @@ export const createPost = async (req, res) => {
         .toLowerCase()
         .replace(/[^a-zA-Z0-9-]/g, '');
 
+        slug = slug.replace(/-+$/, '')
+
         const existingSlug = await Post.findOne({slug})
         const originalSlug = slug
         if(existingSlug) {
@@ -64,6 +66,10 @@ export const getPosts = async (req, res) => {
         .sort({ updatedAt: sortDirection })
         .skip(startIndex)
         .limit(limit)
+        
+        if (!posts || posts.length === 0) {
+            return res.status(404).json({ message: 'No post found' })
+        }
 
         const totalPosts = await Post.countDocuments()
 
@@ -84,8 +90,8 @@ export const getPosts = async (req, res) => {
         }])  
 
     } catch (error) {
-        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
-        else res.status(500).json({ message: "Internal Server Error"})    
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})
+        else res.status(500).json({ message: "Internal Server Error! Please try again later." })    
     }
 }
 
@@ -104,17 +110,43 @@ export const deletePost = async (req, res) => {
 }
 
 export const updatePost = async (req, res) => {
+    const {title} = req.body;
+
     if (!req.user.isAdmin) {
         return res.status(403).json({ message: "You are not allowed to update this post." })
     }
+
     try {
+        const existingTitle = await Post.findOne({title})
+        if(existingTitle) {
+            return res.status(409).json({message: 'Post with this title already exists!'});
+        }         
+        let slug = ""
+        if(req.body.title) {
+            slug = req.body.title
+            .split(' ')
+            .join('-')
+            .toLowerCase()
+            .replace(/[^a-zA-Z0-9-]/g, '');
+
+            slug = slug.replace(/-+$/, '')
+    
+            const existingSlug = await Post.findOne({slug})
+            const originalSlug = slug
+            if(existingSlug) {
+                const count = originalSlug.match(/-\d+$/)?.[0].slice(1) || 0
+                slug += `-${count + 1}`
+            }
+    
+        }
         const postToBeUpdated = await Post.findOneAndUpdate({ _id: req.params.postId }, {
             $set: {
                 title: req.body.title,
                 category: req.body.category,
                 image: req.body.blogImage,
-                description: req.body.description
-            }}, { new: true }
+                description: req.body.description,
+                slug
+            }}, { new: true }           // Return the updated document
         )
         if (!postToBeUpdated) {
             return res.status(403).json({ message: "Post with this id does not exist." })
@@ -122,7 +154,6 @@ export const updatePost = async (req, res) => {
             return res.status(200).json({ message: "Post updated successfully." })
         }
     } catch (error) {
-        console.log('ye error aarha hai: ', error)
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})         
     }

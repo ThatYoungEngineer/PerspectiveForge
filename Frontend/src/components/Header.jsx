@@ -91,11 +91,11 @@ const Header = () => {
                         { theme === 'light' ? <FaMoon /> : <FaSun /> }
                     </Button>
                 </div>
-                <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-10 text-base">
+                {/* <div className="flex gap-2 flex-col items-center justify-center sm:block sm:space-x-10 text-base">
                     <Link to={'/'}> Home </Link>
                     <Link to={'/'}> About </Link>
                     <Link to={'/'}> Contact </Link>
-                </div>
+                </div> */}
                 {currentUser?.userData && 
                     <div className="mt-5 w-full sm:hidden flex items-center justify-center">
                         <Button
