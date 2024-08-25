@@ -79,6 +79,13 @@ const Posts = () => {
                     )}
 
                     {status === 'fulfilled' && (
+                      <>
+                        <section className="w-full flex items-center justify-end p-3 pb-0">
+                          <Link to={'/dashboard?tab=create-new-post'} className="w-full">
+                            <Button className="w-full p-2 font-Onest-Medium" gradientMonochrome="teal" > Create New Post </Button>
+                          </Link>
+                        </section>
+
                         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 ">
                             <Table hoverable className="shadow-md rounded-xl" >
                                 <Table.Head >
@@ -134,9 +141,10 @@ const Posts = () => {
                                         </Table.Cell>
                                       </Table.Row>
                                     </Table.Body>
-                      }
+                                  }
                             </Table>
                         </div>
+                        </>
                     )}
                 </>  
             : <p className="mx-auto text-base">No posts found.</p>

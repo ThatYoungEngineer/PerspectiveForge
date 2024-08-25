@@ -10,10 +10,11 @@ import { IoCreate } from "react-icons/io5"
 import { MdOutlineManageSearch } from "react-icons/md"
 
 const Sidebar = () => {
-    const [tab, setTab] = useState(null)
-    const [ dash, setDash ] = useState(false)
     const dispatch = useDispatch()
     const location = useLocation()
+    const [ tab, setTab ] = useState(null)
+    const [ dash, setDash ] = useState(false)
+    const [ postOptions, setPostOptions ] = useState(false)
     const { currentUser } = useSelector(state=>state.user)
     const { theme } = useSelector(state=>state.theme)
 
@@ -56,22 +57,38 @@ const Sidebar = () => {
                             icon={HiDocumentText}
                             active={tab=='posts'||tab=='create-new-post'}
                             as='div'
-                            className="relative"
+                            className="relative cursor-pointer"
+                            onClick={() => setPostOptions(  prev => !prev )}
                         >
                             Posts
-                            <FaAngleDown className="absolute transform top-1/2 -translate-y-1/2 right-3" />
+                            <FaAngleDown active className={`absolute transform top-1/2 -translate-y-1/2 right-3 transition-transform ${postOptions && 'rotate-180'}`} />
                         </FlowbiteSidebar.Item>
-                        <div className="w-full h-20 flex flex-col gap-5 pl-8">
-                            <Link to='/dashboard?tab=create-new-post' className="flex"> 
-                                <IoCreate className="self-center mr-2" size={20} /> Create Post
-                             </Link>
-                            <Link to='/dashboard?tab=posts' className="flex">
-                                <MdOutlineManageSearch className="self-center mr-2" size={20}/> Manage Post 
-                            </Link>
-                        </div>
+                        {postOptions &&
+                            <div className="w-full h-24 flex flex-col gap-2 pl-6" >
+                                <Link to='/dashboard?tab=create-new-post' > 
+                                    <FlowbiteSidebar.Item icon={IoCreate}
+                                        active={tab=='create-new-post'}
+                                        as='div'                                    
+                                    >
+                                        Create Post
+                                    </FlowbiteSidebar.Item>
+                                </Link>
+                                <Link to='/dashboard?tab=posts' >
+                                    <FlowbiteSidebar.Item icon={MdOutlineManageSearch}
+                                        active={tab=='posts'}
+                                        as='div'
+                                    >
+                                        Manage Post
+                                    </FlowbiteSidebar.Item>
+                                </Link>
+                            </div>
+                        }
                     </>
                 }
-                <FlowbiteSidebar.Item icon={HiArrowRight} className='cursor-pointer' onClick={handleSignOut} >
+                <FlowbiteSidebar.Item 
+                    icon={HiArrowRight} onClick={handleSignOut}
+                    className='cursor-pointer'
+                >
                     Sign Out 
                 </FlowbiteSidebar.Item>
             </FlowbiteSidebar.ItemGroup>
