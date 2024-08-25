@@ -12,9 +12,7 @@ const Hero = () => {
   const { theme } = useSelector(state=>state.theme)
 
   const scrollToRecentPosts = () => {
-    const scrollAmount = window.innerHeight * 1.15     // 115% of the viewport height
-
-    // Scroll the body and the document element for cross-browser compatibility
+    const scrollAmount = window.innerHeight * 1.15
     document.body.scrollTop = scrollAmount
     document.documentElement.scrollTop = scrollAmount
   }
