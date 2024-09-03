@@ -2,6 +2,9 @@ import express from "express";
 import connectDB from "./config/db.js";
 import routes from "./routes/index.js";
 import cookieParser from "cookie-parser";
+import path from 'path';
+
+const __dirname = path.resolve()
 
 const app = express();
 
@@ -21,5 +24,10 @@ app.get('/', (req, res) => {
 
 app.use('/api', routes);
 
+app.use(express.static(path.join(__dirname, 'Frontend/dist')));
 
-connectDB()
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Frontend', 'dist', 'index.html'));
+})
+
+connectDB();

@@ -1,16 +1,17 @@
 {
-  "name": "mern-blog",
+  "name": "PerspectiveForge",
   "version": "1.0.0",
-  "description": "",
+  "description": "A blog site in the world of technology, that helps you to stay updated!",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "server": "nodemon Backend/server.js",
     "client": "npm run dev --host --prefix Frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm install && npm install --prefix Frontend && npm run build --prefix Frontend"
   },
   "keywords": [],
-  "author": "",
+  "author": "Muhammad Talha",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
