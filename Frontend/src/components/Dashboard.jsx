@@ -1,65 +1,122 @@
-import { memo } from "react"
+import { memo, useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { FaUsers } from "react-icons/fa"
+import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6"
+import { Spinner } from "flowbite-react"
+import { SiGooglemessages } from "react-icons/si"
+import { MdComment } from "react-icons/md"
+import { getPosts } from "../store/postSlice"
 
 const Dashboard = () => {
+    const dispatch = useDispatch()
+    const { currentUser } = useSelector(state=>state.user)
+    const { post } = useSelector(state=>state.post)
+    const [ data, setData ] = useState(null)
+    const [ loading, setLoading ] = useState(false)
+    
+    useEffect(() => {
+        const getUserData = async () => {
+            try {
+                setLoading(true)
+                if(!post || post.length === 0) {
+                    dispatch( getPosts() )
+                }          
+                if (data == null) {
+                    const res = await fetch('/api/user/getUsersData', {
+                        method: 'GET',
+                    });
+        
+                    if (res.ok) {
+                        const data = await res.json();
+                        setData(data);
+                        setLoading(false)
+                    } else {
+                        console.error('Failed to fetch user data:', res.status);
+                        setLoading(false)
+                    }
+                } 
+            }
+            catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
 
+        if (!post || post.length === 0 || data == null) getUserData()
+    }, [post]);
+
+    console.log('data: ', data)
     return (
         <>
-            {/* {currentUser.userData.isAdmin
-            ?   <>
-                    {status === 'loading' && (
-                        <div className="w-full h-[85%] flex items-center justify-center">
-                            <Spinner size='xl' />
+            {currentUser.userData.isAdmin
+            ?
+                loading
+                ? <div className='w-full h-[90vh] FlexCenter'>
+                    <Spinner size='xl' />
+                </div>
+                : 
+                <section className="w-full h-screen flex flex-col px-10 md:px-20 py-10 gap-10">
+                    <h1 className="text-2xl text-center italic dark:text-[#D3FFFF] text-[#10a9a9]">Dashboard at your glance!</h1>
+                    <div className="flex justify-between gap-7 flex-wrap"> 
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                            <div className="flex justify-between gap-16 h-fit">
+                                <div className="space-y-2">
+                                    <h2 className="capitalize text-lg text-gray-500">total users</h2>
+                                    <h2 className="text-lg">{data?.totalUsers || 'NULL'}</h2>
+                                </div>
+                                <div className="h-14 w-14 rounded-full bg-teal-500 p-2 FlexCenter shadow-md">
+                                    <FaUsers size='30' color='white'/>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="flex gap-1">
+                                    <FaArrowTrendUp className="text-green-400" />
+                                    <p className="text-green-400">{data?.lastMonthUsers || 'NULL'}</p>
+                                </div>
+                                <h3 className="text-gray-500">Last Month</h3>
+                            </div>
                         </div>
-                    )}
-
-                    {status === 'error' && (
-                        <div className="w-full h-[85%] flex items-center justify-center">
-                            <Alert color='failure' icon={GoAlertFill} className="w-full px-10">
-                                {error}
-                            </Alert>
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                            <div className="flex justify-between gap-16 h-fit">
+                                <div className="space-y-2">
+                                    <h2 className="capitalize text-gray-500 text-lg">total posts</h2>
+                                    <h2 className="text-lg">{post[1]?.totalPosts}</h2>
+                                </div>
+                                <div className="h-14 w-14 FlexCenter rounded-full bg-yellow-400 p-2 shadow-md">
+                                    <SiGooglemessages size='30' color='white' />
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="flex gap-1">
+                                    <FaArrowTrendUp className="text-green-400" />
+                                    <p className="text-green-400">{post[1]?.lastMonthPosts || "NULL"}</p>
+                                </div>
+                                <h3 className="text-gray-500">Last Month</h3>
+                            </div>
                         </div>
-                    )}
-
-                    {status === 'fulfilled' && (
-                        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 ">
-                            <Table hoverable className="shadow-md" >
-                                <Table.Head >
-                                    <Table.HeadCell className="w-1/5 whitespace-nowrap" >Date Updated</Table.HeadCell>
-                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Post Image</Table.HeadCell>
-                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Post Title</Table.HeadCell>
-                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Category</Table.HeadCell>
-                                    <Table.HeadCell className="w-1/5 whitespace-nowrap">Actions</Table.HeadCell>
-                                </Table.Head>
-                                {post.posts.map((p) => (
-                                    <Table.Body key={p._id} className="divide-y" >
-                                        <Table.Row className="w-full" >
-                                            <Table.Cell className="w-1/5 whitespace-nowrap">
-                                                {new Date(p.updatedAt).toLocaleDateString()}
-                                            </Table.Cell>
-                                            <Table.Cell className="w-1/5 whitespace-nowrap" >
-                                                <div className="w-28 h-16 max-w-28 max-h-16 overflow-hidden border-none rounded-md">
-                                                    <img src={p.image} alt={p.title} className="w-28 h-16 hover:scale-[1.1] transition-all ease-in-out duration-200 border-none object-center object-fill " />
-                                                </div>
-                                            </Table.Cell>
-                                            <Table.Cell className="w-1/5" > {p.title} </Table.Cell>
-                                            <Table.Cell className="w-1/5 whitespace-nowrap" > {p.category} </Table.Cell>
-                                            <Table.Cell className="w-1/5 whitespace-nowrap" > 
-                                                <div className="flex gap-1 items-center" >
-                                                    <div className="ActionButtonBG"> <FaRegEye size={15} className="cursor-pointer" /> </div>
-                                                    <div className="ActionButtonBG"> <GoPencil size={15} className="cursor-pointer" /> </div>
-                                                    <div className="ActionButtonBG"> <GoTrash size={15} color="red" className="cursor-pointer" /> </div>
-                                                </div>    
-                                             </Table.Cell>
-                                        </Table.Row>
-                                    </Table.Body>
-                                ))}
-                            </Table>
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                            <div className="flex justify-between gap-16 h-fit">
+                                <div className="space-y-2">
+                                    <h2 className="capitalize text-lg text-gray-500">total comments</h2>
+                                    <h2 className="text-lg">0</h2>
+                                </div>
+                                <div className="h-14 w-14 FlexCenter rounded-full bg-green-500 p-2 shadow-md">
+                                    <MdComment size='30' color='white' />
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="flex gap-1">
+                                    <FaArrowTrendDown className="text-red-500" />
+                                    <p className="text-red-500">0</p>
+                                </div>
+                                <h3 className="text-gray-500">Last Month</h3>
+                            </div>
                         </div>
-                    )}
-                </>  
-            : <p className="mx-auto text-base">No posts found.</p>
-            } */}
-            <p className="text-center text-gray-500">You are not authorized to view this page.</p>
+                    </div>
+                </section>
+                
+            :
+                <p className="text-center text-gray-500">You are not authorized to view this page.</p>
+            }
         </>
     )
 }

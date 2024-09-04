@@ -41,11 +41,13 @@ const Sidebar = () => {
     <>
         <FlowbiteSidebar className="">   
             <FlowbiteSidebar.ItemGroup className="flex flex-col gap-1">
-                <Link to={'/dashboard'}>
-                    <FlowbiteSidebar.Item icon={MdDashboard} as='div' active={dash} >
-                        Dashboard
-                    </FlowbiteSidebar.Item>
-                </Link>
+                {currentUser.userData.isAdmin &&
+                    <Link to={'/dashboard'}>
+                        <FlowbiteSidebar.Item icon={MdDashboard} as='div' active={dash} >
+                            Dashboard
+                        </FlowbiteSidebar.Item>
+                    </Link>
+                }
                 <Link to={'/dashboard?tab=profile'}>
                     <FlowbiteSidebar.Item icon={HiUserCircle} active={tab=='profile'} label={currentUser.userData.isAdmin ? 'Admin' : 'User'} labelColor={theme} as='div' >
                         Profile

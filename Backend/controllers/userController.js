@@ -183,6 +183,36 @@ export const checkUserAuth = async (req, res) => {
     }
 }
 
+export const getUsersData = async (req, res) => {
+    if(!req.user.isAdmin) return res.status(403).json({message: 'Access denied!'});
+
+    try {
+        const totalUsers = await User.countDocuments()
+
+        const currentTime = new Date()
+        const oneMonthAgo = new Date(
+            currentTime.getFullYear(),
+            currentTime.getMonth() - 1,
+            currentTime.getDate()
+        )
+
+        const lastMonthUsers = await User.countDocuments({
+            createdAt: { $gte: oneMonthAgo }
+        })
+
+        res.status(200).json({
+            totalUsers: totalUsers,
+            lastMonthUsers: lastMonthUsers
+        })  
+
+    } catch (error) {
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})
+        else res.status(500).json({ message: "Internal Server Error! Please try again later." })    
+    }
+
+
+}
+
     
 // if(!existingUser) {
 //     return res.status(404).json({ message: "Invalid Email" });

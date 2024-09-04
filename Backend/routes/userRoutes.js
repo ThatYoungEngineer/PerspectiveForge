@@ -7,7 +7,8 @@ import {
     updateUser,
     logout,
     deleteUser,
-    checkUserAuth
+    checkUserAuth,
+    getUsersData
 }  from "../controllers/userController.js"
 
 const router = express.Router();
@@ -19,6 +20,8 @@ router.post('/logout', logout)
 router.put('/update/:userId', verifyToken, updateUser)
 router.delete('/delete/:userId', verifyToken, deleteUser)
 router.get('/checkUserAuth', checkUserAuth)
+router.get('/getUsersData', verifyToken, getUsersData)
+
 
 
 export default router
