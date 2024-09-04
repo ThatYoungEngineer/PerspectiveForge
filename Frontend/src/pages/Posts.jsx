@@ -61,7 +61,7 @@ const Posts = () => {
               :  
                 <>
                   <h2 className="mt-16 text-center font-Onest-SemiBold text-3xl lg:4xl italic">Crafting Perspectives, Shaping Minds</h2>
-                  <section className="w-full max-w-[1600px] grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-[3vw]">
+                  <section className="w-full max-w-[1600px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:gap-[3vw]">
                     {postsData?.map(p => (
                       <Link to={`/posts/${p.slug}`} key={p._id}>
                         <PostCard
