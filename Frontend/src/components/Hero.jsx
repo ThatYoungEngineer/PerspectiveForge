@@ -13,7 +13,7 @@ const Hero = () => {
   const { theme } = useSelector(state=>state.theme)
 
   return (
-    <main className='w-screen z-30 min-h-[650px] h-screen max-h-[950px] absolute top-0 left-0 pt-[20vh] lg:pt-[21vh] px-5 lg:px-0 flex items-start justify-center'>
+    <main className='w-screen z-30 min-h-[650px] h-screen max-h-[950px] absolute top-0 left-0 pt-[18vh] lg:pt-[21vh] px-5 lg:px-0 flex items-start justify-center'>
       {theme == 'dark'
       ?  <img src={heroBG} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top ' />
       : <img src={heroBGLight} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top ' />
@@ -29,8 +29,7 @@ const Hero = () => {
           </section>
         </Link>
         <section className={`flex flex-col gap-3 lg:gap-5 md:items-center justify-start text-center text-3xl md:text-6xl lg:text-7xl font-Onest-Medium  ${theme=='light'?'headingGradientDark':'headingGradient'}`}>
-          <h2>Empowering Innovation through</h2>
-          <h2>Insight and Expertise.</h2>
+          <h2 className='leading-[2.5rem] md:leading-[4.3rem] lg:leading-[5.3rem]'>Empowering Innovation through <br /> Insight and Expertise.</h2>
         </section>
         <section className={`text-base lg:text-xl font-Onest-Regular md:w-[80%] lg:w-[60%] md:text-center ${theme=='light'?'contentGradientDark':'contentGradient'}`} >
           <h4>
