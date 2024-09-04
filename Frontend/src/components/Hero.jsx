@@ -5,17 +5,12 @@ import { FaArrowRight } from "react-icons/fa6"
 import { BsStars } from "react-icons/bs"
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import {Link as ScrollLink} from 'react-scroll'
 
 const Hero = () => {
 
   const { currentUser } = useSelector(state=>state.user)
   const { theme } = useSelector(state=>state.theme)
-
-  const scrollToRecentPosts = () => {
-    const scrollAmount = window.innerHeight * 1.15
-    document.body.scrollTop = scrollAmount
-    document.documentElement.scrollTop = scrollAmount
-  }
 
   return (
     <main className='w-screen z-30 min-h-[650px] h-screen max-h-[950px] absolute top-0 left-0 pt-[20vh] lg:pt-[21vh] px-5 lg:px-0 flex items-start justify-center'>
@@ -34,23 +29,24 @@ const Hero = () => {
           </section>
         </Link>
         <section className={`flex flex-col gap-3 lg:gap-5 md:items-center justify-start text-center text-3xl md:text-6xl lg:text-7xl font-Onest-Medium  ${theme=='light'?'headingGradientDark':'headingGradient'}`}>
-          <h2>In-depth knowledge of technology.</h2>
-          <h2>The future of discovery.</h2>
+          <h2>Empowering Innovation through</h2>
+          <h2>Insight and Expertise.</h2>
         </section>
         <section className={`text-base lg:text-xl font-Onest-Regular md:w-[80%] lg:w-[60%] md:text-center ${theme=='light'?'contentGradientDark':'contentGradient'}`} >
           <h4>
-            Powerful, self-serve team engagement tools and analytics. Supercharge your managers & keep employees engaged from anywhere.
+            In-depth knowledge of technology and modern practices that keeps you updated and motivated at any time.
           </h4>
         </section>
-        <section className='newFeatureShadow rounded-full cursor-pointer' onClick={scrollToRecentPosts}>
-          <div className='w-fit flex items-center justify-center gap-2 relative overflow-hidden p-3 dark:bg-[#2f8e95] bg-[#55aeb4] bg-opacity-100 rounded-full 
-          shadow-inner dark:shadow-[#8b9da2] shadow-[#cfe5ec]'>
-            <img src={btnBG} alt="" className='absolute top-0 left-0 w-full h-full object-cover object-center pointer-events-none bg-transparent ' />
-            <BsStars />
-            <h4 className='text-sm font-Onest-Regular'>Explore Now</h4>
-          </div>
-        </section>
-
+        <ScrollLink to='recentPosts' smooth={true} duration={0} offset={-40} >
+          <section className='newFeatureShadow rounded-full cursor-pointer hover:brightness-125 transition-all ease-in-out duration-100'>
+            <div className='w-fit flex items-center justify-center gap-2 relative overflow-hidden p-3 dark:bg-[#2f8e95] bg-[#55aeb4] bg-opacity-100 rounded-full 
+            shadow-inner dark:shadow-[#8b9da2] shadow-[#cfe5ec]'>
+              <img src={btnBG} alt="" className='absolute top-0 left-0 w-full h-full object-cover object-center pointer-events-none bg-transparent ' />
+              <BsStars />
+              <h4 className='text-sm font-Onest-Regular'>Explore Now</h4>
+            </div>
+          </section>
+        </ScrollLink>
         <section className='flex items-center justify-center'>
           <h4 className='text-lg dark:text-[#EAEAEA] text-[#1a1a1a] opacity-50 font-Onest-Regular'>Trusted by 4,000+ users</h4>
         </section>

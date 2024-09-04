@@ -28,7 +28,7 @@ const RecentPosts = () => {
   }, [])
 
   return (
-    <section className='w-full h-full px-24 pb-24 flex items-center justify-center flex-col gap-10'>
+    <section className='w-full h-full px-5 md:px-16 lg:px-24 pb-24 flex items-center justify-center flex-col gap-10' id="recentPosts">
       <h1 className='text-2xl md:text-3xl lg:text-4xl font-Onest-Medium'>Recent Posts</h1>
       {loading ?
         <Spinner size='xl' className="mt-20 mb-10" />
@@ -40,7 +40,7 @@ const RecentPosts = () => {
             </Alert>
           :  
             <>
-              <section className="w-full max-w-[1600px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              <section className="w-full max-w-[1600px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[3vw]">
                 {postsData?.slice(0, 6).map(p => (
                   <Link to={`/posts/${p.slug}`} key={p._id}>
                     <PostCard

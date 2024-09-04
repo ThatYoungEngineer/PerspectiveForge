@@ -29,7 +29,7 @@ const Posts = () => {
     }, [])
   
     return (
-        <section className='w-full min-h-[90vh] p-24 pt-16 flex items-center justify-center flex-col gap-10'>
+        <section className='w-full min-h-[90vh] px-5 md:px-16 lg:px-24 flex items-center justify-center flex-col gap-10'>
           {loading ?
             <Spinner size='xl' className="mt-20 mb-10" />
           : 
@@ -40,8 +40,8 @@ const Posts = () => {
                 </Alert>
               :  
                 <>
-                  <h2 className="text-center font-Onest-SemiBold text-4xl italic">Crafting Perspectives, Shaping Minds</h2>
-                  <section className="w-full max-w-[1600px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                  <h2 className="mt-16 text-center font-Onest-SemiBold text-3xl lg:4xl italic">Crafting Perspectives, Shaping Minds</h2>
+                  <section className="w-full max-w-[1600px] grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-[3vw]">
                     {postsData?.map(p => (
                       <Link to={`/posts/${p.slug}`} key={p._id}>
                         <PostCard
@@ -53,9 +53,9 @@ const Posts = () => {
                       </Link>
                     ))}
                   </section>
-                    <Button>
-                        Show More
-                    </Button>
+                  <Button className="mb-16 ">
+                    Show More
+                  </Button>
                 </>
               }
             </>
