@@ -10,22 +10,36 @@ export const signup = async (req, res) => {
     }
 
     try {
-        await User.findOne({ email })
-        .then((existingUser) => {
-            if (existingUser) return res.status(400).json({ message: 'User with this email already exists!' })
-            else {
-                const hashPassword = bcryptjs.hashSync(password, 10)
-                const user = new User({
-                    full_name,
-                    email,
-                    password: hashPassword
-                })
-                user
-                .save().then(() => {
-                    res.status(201).json({ message: 'Signed Up successfully' });
-                })
-            }
-        })
+        const existingUser = await User.findOne({ email })
+    
+        if (existingUser) {
+            return res.status(400).json({ message: 'User with this email already exists!' })
+        }
+    
+        let username = ''
+        const nameSlice = full_name.replace(/\s+/g, '').toLowerCase()
+    
+        const existingUsername = await User.findOne({ username: nameSlice })
+        
+        if (existingUsername) {
+            const randomId = Math.floor(103 + Math.random() * 902);  // Generate a 3-digit random number
+            username = nameSlice + randomId; // Append the random number to the name slice
+        } else {
+            username = nameSlice;
+        }
+    
+        const hashPassword = bcryptjs.hashSync(password, 10); // Hash password
+    
+        const user = new User({
+            username,
+            full_name,
+            email,
+            password: hashPassword
+        });
+    
+        await user.save();
+        return res.status(201).json({ message: 'Signed Up successfully' });
+    
     } catch (error) {
         res.status(500).json({ message: "Internal Server Error" });
     }
@@ -128,12 +142,24 @@ export const updateUser = async (req, res) => {
         if (req.body.full_name.length > 26 ) {
             return res.status(400).json({ message: "Name is too long" });
         }
-    } else {
+    } 
+    else {
         return res.status(400).json({ message: "Name is required" });
+    }
+    if (req.body.username) {
+        if (req.body.username.length > 26 ) {
+            return res.status(400).json({ message: "Username is too long" })
+        } else {
+            const existingUsername = await User.findOne({ username: req.body.username })
+            if (existingUsername && existingUsername._id.toString()!== req.params.userId) {
+                return res.status(409).json({ message: "This username isn't available"})
+            }    
+        }
     }
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
             $set: {
+                username: req.body.username,
                 full_name: req.body.full_name,
                 password: req.body.password,
                 profilePhoto: req.body.profilePhoto
@@ -165,6 +191,20 @@ export const deleteUser = async (req, res) => {
         })
     } catch (e) {
         res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const checkUsername = async (req, res) => {
+    const username = req.params.username.toLowerCase()
+    try {
+        const existingUsername = await User.findOne({ username })
+        if (existingUsername) {
+            return res.status(409).json({ message: "This username isn't available"})
+        } else {
+            return res.status(200).json({ message: 'This username is available'})
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
     }
 }
 
