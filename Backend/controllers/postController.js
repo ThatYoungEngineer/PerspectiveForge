@@ -7,26 +7,27 @@ export const createPost = async (req, res) => {
     if(!req.body.title || !req.body.category ||!req.body.description) return res.status(400).json({message: 'Fill out post details to publish!'});
     
     try {
-        const existingTitle = await Post.findOne({title})
-        if(existingTitle) {
-            return res.status(409).json({message: 'Post with this title already exists!'});
-        }     
-
         let slug = title
         .split(' ')
         .join('-')
         .toLowerCase()
         .replace(/[^a-zA-Z0-9-]/g, '');
-
-        slug = slug.replace(/-+$/, '')
-
-        const existingSlug = await Post.findOne({slug})
-        const originalSlug = slug
-        if(existingSlug) {
-            const count = originalSlug.match(/-\d+$/)?.[0].slice(1) || 0
-            slug += `-${count + 1}`
-        }
+    
+        // Remove trailing dashes
+        slug = slug.replace(/-+$/, '');
         
+        // Check if the slug already exists in the database
+        let existingSlug = await Post.findOne({ slug });
+        let originalSlug = slug;
+        let count = 1;
+        
+        // While a post with the same slug exists, append `-count` to the slug and increment the count
+        while (existingSlug) {
+            slug = `${originalSlug}-${count}`;
+            existingSlug = await Post.findOne({ slug });
+            count++;
+        }
+            
         const newPost = new Post ({
             author: req.user._id,
             title: req.body.title,
@@ -40,6 +41,7 @@ export const createPost = async (req, res) => {
         res.status(200).json({message: 'Post published successfully'})
 
     } catch (error) {
+        console.log(error)
         if (error.message.includes('buffering timed out')) res.status(504).json({message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})        
     }
@@ -117,41 +119,54 @@ export const updatePost = async (req, res) => {
     }
 
     try {
-        const existingTitle = await Post.findOne({title})
-        if(existingTitle) {
-            return res.status(409).json({message: 'Post with this title already exists!'});
-        }         
-        let slug = ""
-        if(req.body.title) {
-            slug = req.body.title
-            .split(' ')
-            .join('-')
-            .toLowerCase()
-            .replace(/[^a-zA-Z0-9-]/g, '');
-
-            slug = slug.replace(/-+$/, '')
+        const postToUpdate = await Post.findById(req.params.postId);
     
-            const existingSlug = await Post.findOne({slug})
-            const originalSlug = slug
-            if(existingSlug) {
-                const count = originalSlug.match(/-\d+$/)?.[0].slice(1) || 0
-                slug += `-${count + 1}`
-            }
-    
+        if (!postToUpdate) {
+            return res.status(404).json({ message: "Post with this id does not exist." });
         }
-        const postToBeUpdated = await Post.findOneAndUpdate({ _id: req.params.postId }, {
-            $set: {
-                title: req.body.title,
-                category: req.body.category,
-                image: req.body.blogImage,
-                description: req.body.description,
-                slug
-            }}, { new: true }           // Return the updated document
-        )
+    
+        let slug = postToUpdate.slug; // Default to the current slug
+        const { title, category, blogImage, description } = req.body;
+    
+        // Only generate a new slug if the title has changed
+        if (title && postToUpdate.title !== title) {
+            slug = title
+                .split(' ')
+                .join('-')
+                .toLowerCase()
+                .replace(/[^a-zA-Z0-9-]/g, '')
+                .replace(/-+$/, ''); // Remove trailing dashes
+    
+            // Check if the slug exists and increment if necessary
+            let existingSlug = await Post.findOne({ slug });
+            let originalSlug = slug;
+            let count = 1;
+    
+            while (existingSlug) {
+                slug = `${originalSlug}-${count}`;
+                existingSlug = await Post.findOne({ slug });
+                count++;
+            }
+        }
+    
+        // Update the post with the new values (including the new or unchanged slug)
+        const postToBeUpdated = await Post.findOneAndUpdate({ _id: req.params.postId },
+            {
+                $set: {
+                    title,
+                    category,
+                    image: blogImage,
+                    description,
+                    slug
+                }
+            },
+            { new: true } // Return the updated document
+        );
+    
         if (!postToBeUpdated) {
-            return res.status(403).json({ message: "Post with this id does not exist." })
+            return res.status(500).json({ message: "Failed to update post." });
         } else {
-            return res.status(200).json({ message: "Post updated successfully." })
+            return res.status(200).json({ message: "Post updated successfully.", post: postToBeUpdated });
         }
     } catch (error) {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})

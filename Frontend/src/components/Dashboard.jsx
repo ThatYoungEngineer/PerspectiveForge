@@ -55,9 +55,9 @@ const Dashboard = () => {
                 </div>
                 : 
                 <section className="w-full h-screen flex flex-col px-10 md:px-20 py-10 gap-10">
-                    <h1 className="text-2xl text-center italic dark:text-[#D3FFFF] text-[#10a9a9]">Dashboard at your glance!</h1>
+                    <h1 className="text-center text-4xl font-semibold dark:text-[#D3FFFF] text-[#0fa2a2]">Dashboard at your glance!</h1>
                     <div className="flex justify-between gap-7 flex-wrap"> 
-                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
                             <div className="flex justify-between gap-16 h-fit">
                                 <div className="space-y-2">
                                     <h2 className="capitalize text-lg text-gray-500">total users</h2>
@@ -75,7 +75,7 @@ const Dashboard = () => {
                                 <h3 className="text-gray-500">Last Month</h3>
                             </div>
                         </div>
-                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
                             <div className="flex justify-between gap-16 h-fit">
                                 <div className="space-y-2">
                                     <h2 className="capitalize text-gray-500 text-lg">total posts</h2>
@@ -93,7 +93,7 @@ const Dashboard = () => {
                                 <h3 className="text-gray-500">Last Month</h3>
                             </div>
                         </div>
-                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md dark:bg-slate-800">
+                        <div className="flex-1 shadow-md flex flex-col gap-10 p-3 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
                             <div className="flex justify-between gap-16 h-fit">
                                 <div className="space-y-2">
                                     <h2 className="capitalize text-lg text-gray-500">total comments</h2>

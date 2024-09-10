@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getPostBySlug } from '../store/postSlice'
 import { Spinner, Button, Alert } from 'flowbite-react'
 import { GoAlertFill, GoPencil } from 'react-icons/go'
+import CommentSection from '../components/CommentSection'
 
 const Post = () => {
     const dispatch = useDispatch()
@@ -58,6 +59,7 @@ const Post = () => {
         <section dangerouslySetInnerHTML={{__html: postData?.description}} className='px-5 post-content text-gray-700 dark:text-gray-200'> 
         </section>
       </section>
+      <CommentSection id={postData?._id} />
   </section>
 }
 

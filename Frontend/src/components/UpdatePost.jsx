@@ -227,7 +227,7 @@ const UpdatePost = () => {
                     defaultValue={postData?.title}
                     // value={updatePostFormik.title} 
                     onBlur={updatePostFormik.handleBlur}
-                    onChange={updatePostFormik.handleChange} 
+                    onChange={()=>{updatePostFormik.handleChange, setSuccess(null), setError(null)}} 
                     />
                     {(updatePostFormik.touched.title && updatePostFormik.errors.title) && <p className='mt-1 text-xs text-red-600'>{updatePostFormik.errors.title}</p>}
                 </div>
@@ -290,7 +290,9 @@ const UpdatePost = () => {
                         updatePostFormik.setFieldTouched('description', true)
                     }}
                     onChange={(value) => {
-                        updatePostFormik.setFieldValue('description', value);
+                        updatePostFormik.setFieldValue('description', value),
+                        setSuccess(null),
+                        setError(null)
                     }}
                 />
                 {(updatePostFormik.touched.description && updatePostFormik.errors.description) && <p className='mt-1 text-xs text-red-600 absolute left-0 -bottom-16'>{updatePostFormik.errors.description}</p>}
