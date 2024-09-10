@@ -58,8 +58,8 @@ const Post = () => {
         <hr />
         <section dangerouslySetInnerHTML={{__html: postData?.description}} className='px-5 post-content text-gray-700 dark:text-gray-200'> 
         </section>
-      </section>
       <CommentSection id={postData?._id} />
+      </section>
   </section>
 }
 

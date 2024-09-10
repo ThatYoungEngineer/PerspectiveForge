@@ -166,7 +166,7 @@ export const updatePost = async (req, res) => {
         if (!postToBeUpdated) {
             return res.status(500).json({ message: "Failed to update post." });
         } else {
-            return res.status(200).json({ message: "Post updated successfully.", post: postToBeUpdated });
+            return res.status(200).json({ message: "Post updated successfully."});
         }
     } catch (error) {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error. Please try again later'})
