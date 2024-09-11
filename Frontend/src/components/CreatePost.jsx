@@ -166,7 +166,7 @@ const CreatePost = () => {
     })
 
   return (
-    <div className=" w-full h-fit flex flex-col gap-10 items-center xl:p-20 py-10">
+    <div className=" w-full h-fit flex flex-col gap-10 items-center xl:p-20 py-10 xl:py-10">
         <h1 className="text-center text-4xl font-semibold">Create Post.</h1>
         <form onSubmit={createPostFormik.handleSubmit} className="w-[90vw] md:w-full max-w-3xl flex flex-col gap-5">
             <div className="flex flex-col md:flex-row gap-4">

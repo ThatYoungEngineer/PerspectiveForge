@@ -8,6 +8,16 @@ export const signup = async (req, res) => {
     if (!full_name || !email || !password || email === "" || password === "" || full_name === "") {
         return res.status(400).json({ message: 'All fields are required' })
     }
+    if (full_name) {
+        if (full_name.length < 3 ) {
+            return res.status(400).json({ message: "Name must be at least 3 characters!" });
+        }
+        else if (full_name.length > 26 ) {
+            return res.status(400).json({ message: "Name is too long" });
+        } else if (!/^[a-zA-Z\s]+$/.test(full_name)) {
+            return res.status(400).json({ message: "Invalid name!" })
+        }
+    } 
 
     try {
         const existingUser = await User.findOne({ email })
@@ -128,6 +138,23 @@ export const logout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
 }
 
+//updateUser validation logic
+
+const validateUsername = (username) => {
+    if (!username) {
+        return "Username is required!";
+    } else if (username.length < 5) {
+        return "Username must be at least 5 characters long!";
+    } else if (username.length > 24) {
+        return "Username must be no longer than 24 characters!";
+    } else if (!/^[a-z0-9]+$/.test(username)) {
+        return "Username must be in lowercase!";
+    } else if (!/^(?=(.*[a-z]){3,})[a-z0-9]+$/.test(username)) {
+        return "Invalid username!";
+    }
+    return null;
+}
+
 export const updateUser = async (req, res) => {
     if (req.user.id !== req.params.userId) {
         return res.status(403).json({message: "You are not allowed to update this user" })
@@ -139,22 +166,25 @@ export const updateUser = async (req, res) => {
         req.body.password = bcryptjs.hashSync(req.body.password, 10)
     }
     if (req.body.full_name) {
-        if (req.body.full_name.length > 26 ) {
+        if (req.body.full_name.length < 3 ) {
+            return res.status(400).json({ message: "Name must be at least 3 characters!" });
+        }
+        else if (req.body.full_name.length > 26 ) {
             return res.status(400).json({ message: "Name is too long" });
+        } else if (!/^[a-zA-Z\s]+$/.test(req.body.full_name)) {
+            return res.status(400).json({ message: "Invalid name!" })
         }
     } 
-    else {
-        return res.status(400).json({ message: "Name is required" });
-    }
+    
     if (req.body.username) {
-        if (req.body.username.length > 26 ) {
-            return res.status(400).json({ message: "Username is too long" })
-        } else {
-            const existingUsername = await User.findOne({ username: req.body.username })
-            if (existingUsername && existingUsername._id.toString()!== req.params.userId) {
-                return res.status(409).json({ message: "This username isn't available"})
-            }    
+        const validationError = validateUsername(req.body.username)
+        if (validationError) {
+            return res.status(400).json({ message: validationError });
         }
+        const existingUsername = await User.findOne({ username: req.body.username })
+        if (existingUsername && existingUsername._id.toString()!== req.params.userId) {
+            return res.status(409).json({ message: "This username isn't available"})
+        }    
     }
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
@@ -252,10 +282,3 @@ export const getUsersData = async (req, res) => {
 
 
 }
-
-    
-// if(!existingUser) {
-//     return res.status(404).json({ message: "Invalid Email" });
-// } else if (existingUser.password !== password) {
-//     return res.status(404).json({ message: "Invalid password" });
-// }

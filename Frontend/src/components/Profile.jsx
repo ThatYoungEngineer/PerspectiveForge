@@ -9,6 +9,7 @@ import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
 import { HiInformationCircle } from "react-icons/hi"
 import { IoTrashSharp } from "react-icons/io5"
 import { IoIosCheckmarkCircleOutline } from "react-icons/io"
+import { IoWarning } from "react-icons/io5"
 import checkIcon from "../assets/images/check.png"
 
 import * as yup from "yup"
@@ -46,7 +47,7 @@ const Profile = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
-    const [username, setUsername] = useState(null)
+    const timerRef = useRef(null)
 
     const filePickerRef = useRef()
 
@@ -107,19 +108,24 @@ const uploadImage = async () => {
 }
     
     const schema = yup.object().shape({
+        username: yup
+        .string()
+        .required()
+        .trim(),
         profilePhoto: yup
         .mixed(),
         full_name: yup
         .string()
         .required("Name is required")
-        .min(3, "Name must be at least 3 characters")
+        .min(3, "Name must be at least 3 characters!")
         .max(24, "Name is too long!")
+        .matches(/^[a-zA-Z\s]+$/, "Invalid name!")
         .trim(),
         password: yup
         .string()
         .trim()
         .min(7, "Password must be at least 7 characters")
-        .matches( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$/, "Choose a strong password" ),
+        .matches( /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{7,}$/, "Password must contain at least one uppercase, lowercase, special character and number!" ),
         confirmPassword: yup
         .string()
         .test('passwords-match', 'Passwords must match', function(value) {
@@ -127,9 +133,10 @@ const uploadImage = async () => {
         })
     })
 
+
     const updateUserFormik = useFormik({
         initialValues: {
-          username: currentUser?.userData?.username,
+          username: currentUser?.userData?.username ?? null,
           full_name: currentUser?.userData?.full_name,
           email: currentUser?.userData?.email,
           profilePhoto: "",
@@ -138,13 +145,14 @@ const uploadImage = async () => {
         },
         validationSchema: schema,
         onSubmit: async (values, {resetForm} ) => {
+            console.log(values)
             try {
                 setFormErrorMessage("")
                 setFormSuccessMessage("")
                 document.querySelectorAll('input').forEach(element => element.blur());
                 let userData = {
                     id: currentUser.userData._id,
-                    ...(username && { username: username }),
+                    ...(username && { username: values.username }),
                     ...(values.full_name && { full_name: values.full_name }),
                     ...(values.password && { password: values.password }),
                 }
@@ -178,29 +186,65 @@ const uploadImage = async () => {
         const userId = currentUser.userData._id 
         dispatch(deleteUser(userId))
     }
+
+    const handleUsernameChange = (e) => {
+        let value = e.target.value.trim(); // Trim spaces
+        let currentError = null; // Track current error locally
+        
+        // Reset error and loading states
+        setError(null);
+        setSuccess(false);
+        setLoading(false);
     
-    const handleUsernameChange = async (e) => {
-        setLoading(true)
-        const value = e.target.value
-
-        setTimeout( async () => {
-            const res = await fetch(`/api/user/checkUsername/${value}`)
-            const data = await res.json()
-            // console.log(res)
-            if(res.status === 200) {
-                setLoading(false)
-                setError(null)
-                setSuccess(true)
-            } else {
-                setLoading(false)
-                setSuccess(false)
-                setError(data?.message)
+        // Clear previous timeout if it exists
+        if (timerRef.current) clearTimeout(timerRef.current);
+    
+        // Validate username
+        if (!value) {
+            currentError = "Username is required!"
+        } else if (value.length < 5) {
+            currentError = "Username must be at least 5 characters long!";
+        } else if (value.length > 24) {
+            currentError = "Username must be no longer than 24 characters!";
+        } else if (!/^[a-z0-9]+$/.test(value)) {
+            currentError = "Username must be in lowercase!"
+        } else if (!/^(?=(.*[a-zA-Z]){3,})[a-zA-Z0-9]+$/.test(value)) {
+            currentError = "Invalid username!";
+        }
+    
+        // Set error if any validation fails
+        if (currentError) {
+            setError(currentError);
+            return
+        }
+    
+        // If no errors, proceed with the API call (debounced)
+        setLoading(true);
+        timerRef.current = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/user/checkUsername/${value}`);
+                const data = await res.json();
+    
+                if (res.status === 200) {
+                    setLoading(false);
+                    setError(null);
+                    setSuccess(true);
+                } else {
+                    setLoading(false);
+                    setError(data?.message || "Username is unavailable");
+                    setSuccess(false);
+                }
+            } catch (err) {
+                setLoading(false);
+                setError("An error occurred while checking the username");
+                setSuccess(false);
             }
-
-        }, 1000)
-        setUsername(value)
-    }   
-
+        }, 1000);
+    
+        // Update the Formik field value
+        updateUserFormik.setFieldValue("username", value);
+    }    
+    
   return (
     <>
         {deleteAccountPopup &&
@@ -229,7 +273,7 @@ const uploadImage = async () => {
                 </article>
             </section> 
         }
-        <div className='w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10'>
+        <div className='min-h-[120vh] w-full xl:p-20 flex flex-col gap-10 items-center justify-start py-10 xl:py-10'>
             <h2 className="text-4xl font-semibold md:mb-0"> Profile. </h2>
 
             <form onSubmit={updateUserFormik.handleSubmit} className="w-[90vw] md:w-full h-full flex gap-5 flex-col items-center justify-center" >
@@ -270,7 +314,7 @@ const uploadImage = async () => {
                         onBlur={updateUserFormik.handleBlur}
                         onChange={updateUserFormik.handleChange} 
                     />
-                    {(updateUserFormik.touched.full_name && updateUserFormik.errors.full_name) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.full_name}</p>}
+                    {(updateUserFormik.touched.full_name && updateUserFormik.errors.full_name) && <p className='flex items-center gap-1 mt-1 text-xs text-red-600'><IoWarning size={15} /> {updateUserFormik.errors.full_name}</p>}
                 </div>
                 <div className="w-full md:w-fit" >
                     <label htmlFor="username" className="text-sm"> Username </label>
@@ -280,13 +324,14 @@ const uploadImage = async () => {
                             name="username"
                             type="text"
                             className="w-full md:w-[30rem]"
-                            defaultValue={currentUser.userData.username}
+                            defaultValue={currentUser.userData.username || updateUserFormik.values.username}
+                            onBlur={updateUserFormik.handleBlur}
                             onChange={handleUsernameChange}
                         />
-                        {loading && <Spinner size='sm' className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer" />}
-                        {success && <img src={checkIcon} alt="check" className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer" /> }
+                        {loading &&  <div className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer"> <Spinner size='sm' /> </div> }
+                        {success && <img src={checkIcon} alt="check" className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer w-5 h-5 object-cover" /> }
                     </div>
-                    {error && <p className='mt-1 text-xs text-red-600'>{error} </p> }
+                    {(updateUserFormik.touched.username && error) &&<p className='flex items-center gap-1 mt-1 text-xs text-red-600'><IoWarning size={15} /> {error} </p> }
                 </div>
                 <div className="w-full md:w-fit">
                     <label htmlFor="email" className="text-sm"> Email </label>
@@ -294,7 +339,8 @@ const uploadImage = async () => {
                         value={currentUser.userData.email}
                         id="email"
                         type="text"
-                        className=" w-full md:w-[30rem]"
+                        className="w-full md:w-[30rem]"
+                        style={{ fontStyle: "italic", color: "#E3A008" }}
                         readOnly
                     />
                 </div>
@@ -317,7 +363,7 @@ const uploadImage = async () => {
                             <BsEyeSlashFill className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer" onClick={toggleShowPassword} /> 
                         }
                     </div>
-                        {(updateUserFormik.touched.password && updateUserFormik.errors.password) && <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.password}</p>}
+                    {(updateUserFormik.touched.password && updateUserFormik.errors.password) && <div className="w-full md:w-[30rem]"> <p className='mt-1 text-xs text-red-600'>{updateUserFormik.errors.password}</p> </div>}
                 </div>
                 <div className="w-full md:w-fit">
                     <label htmlFor="confirmPassword" className="text-sm"> Confirm New Password </label>
@@ -338,24 +384,16 @@ const uploadImage = async () => {
                         updateUserFormik.isSubmitting || status === 'loading' ||    // Disable when submitting
                         !updateUserFormik.isValid ||                                 // Disable when form is invalid
                         !updateUserFormik.dirty  ||                                   // Disable when form has no changes
-                        error
+                        error || loading
                     }
                     >
                     {status === 'loading' || updateUserFormik.isSubmitting ?  <Spinner aria-label="Default status example" /> : "Save Changes" }    
                 </Button>
                 {formSuccessMessage && <Alert color="success" icon={IoIosCheckmarkCircleOutline}> <p>{formSuccessMessage}</p> </Alert > }
                 {formErrorMessage && <Alert color="failure" icon={HiInformationCircle}> <p>{formErrorMessage}</p> </Alert> }
-                {
-                    currentUser.userData.isAdmin && (
-                        <Link to='/dashboard?tab=create-new-post' className="w-full md:w-fit">
-                            <Button type="button" className="w-full md:w-[30rem]" gradientDuoTone='purpleToPink' >
-                                Create a post
-                            </Button>
-                        </Link>
-                    )
-                }
+               
                 {!currentUser.userData.isAdmin && 
-                    <Accordion className="md:w-[30rem] mt-10" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
+                    <Accordion className="md:w-[30rem] mt-20" style={{ background: 'rgb(252, 151, 151)', borderRadius: '.4rem', border: 'none' }} >
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon  style={{ color: "rgb(182, 28, 28)" }} />}
                             aria-controls="panel2-content"
