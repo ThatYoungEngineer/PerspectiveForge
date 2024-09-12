@@ -35,7 +35,7 @@ const Post = () => {
         <Alert color='failure' icon={GoAlertFill} > {error}! Invalid Slug </Alert>
       </div>
     :
-    <section className={`flex items-center flex-col gap-10 px-28 ${currentUser?.userData?.isAdmin ? 'py-5' : 'py-16'} `}>
+    <section className={`flex items-center flex-col gap-5 lg:gap-10 px-5 lg:px-16 xl:px-28 ${currentUser?.userData?.isAdmin ? 'py-5' : 'py-16'} `}>
       {currentUser?.userData?.isAdmin && 
         <div className='w-full flex items-center justify-end'> 
           <Link to={`/dashboard/update-post/${postData?._id}`}>
@@ -48,17 +48,17 @@ const Post = () => {
         {postData?.category}
       </Button>
       <img src={postData?.image} alt="post-image" className='rounded-lg' />
-      <section className='w-full px-28 space-y-3'>
-        <div className='w-full flex justify-between items-center text-xs px-5'>
+      <section className='w-full xl:px-28 space-y-3'>
+        <div className='w-full flex justify-between items-center text-xs px-2 lg:px-5'>
           <p>{new Date(postData?.updatedAt).toLocaleDateString()}</p>
           <p className='italic'>
             {(postData?.description.length / 1000).toFixed(0) == 0 ? 'Less than 1 minute read' : `${(postData?.description.length / 1000).toFixed(0)} minutes read`}
           </p>
         </div>
         <hr />
-        <section dangerouslySetInnerHTML={{__html: postData?.description}} className='px-5 post-content text-gray-700 dark:text-gray-200'> 
+        <section dangerouslySetInnerHTML={{__html: postData?.description}} className='px-2 lg:px-5 post-content text-gray-700 dark:text-gray-200'> 
         </section>
-      {/* <CommentSection id={postData?._id} /> */}
+      <CommentSection id={postData?._id} />
       </section>
   </section>
 }

@@ -1,8 +1,7 @@
-import { useState, useRef, memo } from "react"
+import { useState, useEffect, useRef, memo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Button, TextInput, Alert, Spinner } from "flowbite-react"
-import { Link } from "react-router-dom"
-
+import { useLocation } from "react-router-dom"
 
 import { MdModeEditOutline } from "react-icons/md"
 import { BsEyeFill, BsEyeSlashFill } from "react-icons/bs"
@@ -48,6 +47,8 @@ const Profile = () => {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
     const timerRef = useRef(null)
+    const location = useLocation();
+    const usernameInputRef = useRef(null);
 
     const filePickerRef = useRef()
 
@@ -244,6 +245,14 @@ const uploadImage = async () => {
         // Update the Formik field value
         updateUserFormik.setFieldValue("username", value);
     }    
+
+    useEffect(() => {
+        console.log(location)
+        if (location.state?.username === "username") {
+          // Focus on the input field
+          usernameInputRef.current.focus();
+        }
+    }, [location]);
     
   return (
     <>
@@ -327,6 +336,7 @@ const uploadImage = async () => {
                             defaultValue={currentUser.userData.username || updateUserFormik.values.username}
                             onBlur={updateUserFormik.handleBlur}
                             onChange={handleUsernameChange}
+                            ref={usernameInputRef}
                         />
                         {loading &&  <div className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer"> <Spinner size='sm' /> </div> }
                         {success && <img src={checkIcon} alt="check" className="absolute right-5 transform top-1/2 -translate-y-1/2 cursor-pointer w-5 h-5 object-cover" /> }
