@@ -3,6 +3,8 @@ import { Post } from '../models/postModel.js'
 export const createPost = async (req, res) => {
     const {title} = req.body;
 
+    console.log('ye user hai: ', req.user)
+
     if(!req.user.isAdmin) return res.status(403).json({message: 'You are not allowed to create a post!'});
     if(!req.body.title || !req.body.category ||!req.body.description) return res.status(400).json({message: 'Fill out post details to publish!'});
     
@@ -29,7 +31,7 @@ export const createPost = async (req, res) => {
         }
             
         const newPost = new Post ({
-            author: req.user._id,
+            author: req.user.id,
             title: req.body.title,
             category: req.body.category,
             description: req.body.description,

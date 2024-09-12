@@ -21,7 +21,7 @@ import {
 } from 'firebase/storage'
 
 
-const options = [
+const UnsortedOptions = [
     { key: 'select', value: 'Select a category', disabled: true, hidden: true, selected: true },
     { key: 'typescript', value: 'TypeScript' }, { key: 'javascript', value: 'JavaScript' }, 
     { key: 'reactjs', value: 'React JS' }, { key: 'nodejs', value: 'Node JS' },
@@ -33,6 +33,18 @@ const options = [
     { key: 'aws', value: 'AWS' }, { key: 'nginx', value: 'Nginx' },
     { key: 'ai', value: 'Artificial Intelligence' }, { key: 'non-tech', value: 'Non-Technical' },
 ]
+
+const options = UnsortedOptions.sort((a, b) => {
+    if (a.value === 'Select a category') return -1;  // Keep "Select a category" at the top
+    if (b.value === 'Select a category') return 1;
+    if (a.value === 'Non-Technical') return 1;       // Keep "Non-Technical" at the bottom
+    if (b.value === 'Non-Technical') return -1;
+    
+    // Default alphabetical sorting for other items
+    if (a.value < b.value) return -1;
+    if (a.value > b.value) return 1;
+    return 0;
+})
 
 const CreatePost = () => {
     const dispatch = useDispatch()

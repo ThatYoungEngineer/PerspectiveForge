@@ -25,7 +25,7 @@ const postSchema = mongoose.Schema({
     image: {
         type: String,
         default: "https://firebasestorage.googleapis.com/v0/b/perspectiveforge-2843b.appspot.com/o/default-blog.webp?alt=media&token=8dfc5869-f037-4021-8b99-63250ce2d95b" 
-    },
+    }
 }, {timestamps: true}
 );
 
