@@ -1,7 +1,6 @@
 import { Comment } from "../models/commentModel.js";
 
 export const postComment = async (req, res) => {
-    console.log(req.body)
     try {
         const {content, postId, userId} = req.body
 
@@ -18,7 +17,25 @@ export const postComment = async (req, res) => {
             userId
         })
         await comment.save()
-        res.status(200).json({ message: 'Comment posted successfully!' })
+        res.status(200).json({ comment, message: 'Comment posted successfully!' })
+    } catch (error) {
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({ message: 'Network error. Please try again later'})
+        else res.status(500).json({ message: "Internal Server Error"})
+    }
+}
+
+export const getPostComments = async (req, res) => {
+    try {
+        const { postId } = req.params
+
+        let comments = []
+        comments = await Comment.find({ postId })
+        .sort({ createdAt: -1 })
+
+        if (comments.length === 0 || !comments) {
+            return res.status(200).json({ message: "This post has no comments!" })
+        }        
+        res.status(200).json(comments)
     } catch (error) {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({ message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})

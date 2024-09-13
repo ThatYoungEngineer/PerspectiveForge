@@ -4,12 +4,13 @@ import logo from "../assets/images/PerspectiveForge.png"
 import logoLight from "../assets/images/PerspectiveForge-light.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
 import { GoAlertFill } from "react-icons/go"
-import { Link } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import * as yup from "yup"
 import { useFormik } from "formik"
 import { useDispatch, useSelector } from "react-redux"
 import { signInUser } from "../store/userSlice"
 import { FaQuoteRight } from "react-icons/fa6"
+
 import { FaQuoteLeft } from "react-icons/fa6"
 
 const SignIn = () => {
@@ -19,6 +20,10 @@ const SignIn = () => {
   const {status} = useSelector(state=>state.user)
   const [errorMessage , setErrorMessage] = useState(null)
   const [authBtnDisabled, setAuthBtnDisabled] = useState("")
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // console.log('historryyy: ',history)
 
   const schema = yup.object().shape({
     email: yup
@@ -45,8 +50,12 @@ const SignIn = () => {
       }
       try {
         setErrorMessage('')
-        await dispatch(signInUser(userData))
-        .then((data) => data.error?.message && setErrorMessage(data.error.message))
+        const result = await dispatch(signInUser(userData))            
+        if (result.error?.message) {
+          setErrorMessage(result.error.message)
+        } else {
+          navigate(from, { replace: true }) // Replace the current entry in the history stack
+        }
       } catch (error) {
         console.log("error: ", error)
         setErrorMessage(error)  
@@ -57,6 +66,7 @@ const SignIn = () => {
   const getSignUpError = (error) => {
     setErrorMessage(error)
   }    
+
   const getSignUpSuccess = (success) => {
   }
 

@@ -2,16 +2,18 @@ import { useSelector } from "react-redux"
 import { useNavigate, Link } from "react-router-dom"
 import { Textarea, Button, Alert } from "flowbite-react"
 import { LuExternalLink } from "react-icons/lu"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { GoAlertFill } from "react-icons/go"
+import Comment from "./Comment"
 
 const CommentSection = (props) => {
     const navigate = useNavigate()
     const { currentUser } = useSelector(state=>state.user)
     const [comment, setComment] = useState('')
     const [commentError, setCommentError] = useState(null)
+    const [comments, setComments] = useState([])
+    const [commentsError, setCommentsError] = useState(null)
 
-    console.log(currentUser)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -33,18 +35,37 @@ const CommentSection = (props) => {
             })
             if(res.ok) {
                 const data = await res.json()
-                console.log(data)
+                setComments([data.comment, ...comments])
             }            
         } catch (error) {
             setCommentError(error.message)
         }
     }
 
+    useEffect(() => {
+        const fetchComments = async () => {
+            setCommentsError(null)
+            try {
+                const res = await fetch(`/api/comment/getPostComments/${props.id}`, {
+                    method: 'GET'
+                })
+                if(res.ok) {
+                    const data = await res.json()
+                    setComments(data)
+                }
+            } catch (error) {
+                setCommentsError(error.message)
+            }
+        }
+        props.id && fetchComments()
+
+    }, [props.id])
+
 
   return (
-    <div className="px-2 lg:px-5 w-full relative">
+    <div className="px-2 lg:px-5 w-full">
         {currentUser
-        ?   <div className="mt-20">
+        ?   <div className="mt-10">
             <span className="flex gap-1 items-center text-sm"> Signed in as:
                 <img src={currentUser?.userData?.profilePhoto} alt="" className="w-7 h-7 rounded-full bg-gray-200" />
                 <Link to={"/dashboard?tab=profile"}>
@@ -65,9 +86,9 @@ const CommentSection = (props) => {
             </div>
         </div>
         }
-        <h2 className="mt-7 text-2xl font-Onest-SemiBold">739 Comments</h2>
+        <h2 className="mt-7 text-2xl font-Onest-SemiBold mb-4">{comments?.length ?? 0} {comments?.length == 1 ? "Comment" : "Comments"} </h2>
         {currentUser?.userData &&
-            <div className="w-full border border-teal-300 p-3 rounded-lg my-4">
+            <div className="w-full border border-teal-300 p-3 rounded-lg mb-4">
                 {currentUser?.userData?.username 
                 ?   <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
                         <Textarea 
@@ -96,6 +117,19 @@ const CommentSection = (props) => {
                 }            
             </div>
         }
+        <section className="w-full flex flex-col gap-5 my-10">
+            {comments?.message 
+            ?   
+                <p className="w-full text-center italic">{comments?.message}</p>
+            :   
+                comments?.map((c) => (
+                    <Comment 
+                        key={c._id}
+                        comment = {c} 
+                    />
+                ))
+            }
+        </section>
     </div>
   )
 }

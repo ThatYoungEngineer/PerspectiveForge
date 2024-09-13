@@ -288,7 +288,8 @@ export const getUserById = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         } else {
-            return res.status(200).json(user);
+            const { password, ...userData } = user._doc
+            return res.status(200).json(userData);
         }
     } catch (error) {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})

@@ -23,7 +23,7 @@ router.put('/update/:userId', verifyToken, updateUser)
 router.delete('/delete/:userId', verifyToken, deleteUser)
 router.get('/checkUserAuth', checkUserAuth)
 router.get('/getUsersData', verifyToken, getUsersData)
-router.get('/getUserById/:userId', verifyToken, getUserById)
+router.get('/getUserById/:userId', getUserById)
 router.get('/checkUsername/:username', verifyToken, checkUsername)
 
 export default router

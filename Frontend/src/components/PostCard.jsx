@@ -74,7 +74,7 @@ const PostCard = (props) => {
         <div className="space-y-1">
           <div className="text-[.70rem] italic flex justify-between">
             <p>{formatDateWithSuffix(props.updatedAt)}</p>
-            <p className={`${formatRelativeTime(props.updatedAt) === 'Just Now' ? 'text-[#ffd383]' : ''}`}>
+            <p className={`${formatRelativeTime(props.updatedAt) === 'Just Now' ? 'text-[#ffd383]' : ''}`} >
               {formatRelativeTime(props.updatedAt)}
             </p>
           </div>
