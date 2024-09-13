@@ -23,7 +23,7 @@ const SignIn = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // console.log('historryyy: ',history)
+  let from = location.state?.prevLocation || '/login'
 
   const schema = yup.object().shape({
     email: yup
@@ -54,7 +54,7 @@ const SignIn = () => {
         if (result.error?.message) {
           setErrorMessage(result.error.message)
         } else {
-          navigate(from, { replace: true }) // Replace the current entry in the history stack
+          navigate(from, { replace: true })
         }
       } catch (error) {
         console.log("error: ", error)

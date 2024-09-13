@@ -8,6 +8,8 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io"
 
 import { useDispatch, useSelector } from'react-redux'
 import { oAuth } from '../store/userSlice.js'
+import { useLocation, useNavigate } from 'react-router'
+
  
   const OAuth = (props) => {
     const dispatch = useDispatch()  
@@ -15,6 +17,10 @@ import { oAuth } from '../store/userSlice.js'
     const [successMessage, setSuccessMessage] = useState('') 
     const [errorMessage, setErrorMessage] = useState('') 
     const [btnDisable, setBtnDisable] = useState('')
+
+    const navigate = useNavigate()
+    const location = useLocation()  
+    let from = location.state?.prevLocation || '/login'
 
     const handleGoogleClick = async () => {
         const auth = getAuth(app)
@@ -30,8 +36,10 @@ import { oAuth } from '../store/userSlice.js'
             const userData = resultFromGoogle._tokenResponse
             const responseData = await dispatch(oAuth(userData))
             if (responseData?.error) props.getSignUpError(responseData?.error.message)
-            else props.getSignUpSuccess(responseData.payload.message)
-
+            else {
+                props.getSignUpSuccess(responseData.payload.message)
+                navigate(from, { replace: true })
+            }
             setBtnDisable('')
         } catch (error) {
             if (error.message.includes('popup-closed-by-user')) props.getSignUpError('Error! Please try again.')

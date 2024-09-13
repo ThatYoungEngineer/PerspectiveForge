@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux"
-import { useNavigate, Link } from "react-router-dom"
+import { useLocation, useNavigate, Link } from "react-router-dom"
 import { Textarea, Button, Alert } from "flowbite-react"
 import { LuExternalLink } from "react-icons/lu"
 import { useEffect, useState } from "react"
@@ -8,6 +8,7 @@ import Comment from "./Comment"
 
 const CommentSection = (props) => {
     const navigate = useNavigate()
+    const location = useLocation()
     const { currentUser } = useSelector(state=>state.user)
     const [comment, setComment] = useState('')
     const [commentError, setCommentError] = useState(null)
@@ -77,11 +78,16 @@ const CommentSection = (props) => {
         </div> 
         :   <div className="flex flex-col gap-4 mt-10">
             <div className="flex gap-1 text-sm">
-                <Link to={'/login'} className="w-fit">
+                <div
+                    onClick={()=>{navigate('/login',
+                        {replace: false, state: {prevLocation: location?.pathname}}
+                    )}} 
+                    className="w-fit"
+                >
                     <h2 className="w-fit hover:underline text-teal-300">
                         Sign in
                     </h2>
-                </Link>
+                </div>
                 <h2>to comment.</h2>
             </div>
         </div>
