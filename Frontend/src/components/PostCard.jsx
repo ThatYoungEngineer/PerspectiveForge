@@ -63,7 +63,7 @@ const PostCard = (props) => {
 }
   
   return (
-    <div className="h-full border border-teal-300 rounded-lg group/postCard blur-sm" id="postCard" >
+    <div className="h-full border border-teal-300 rounded-lg group/postCard" id="postCard" >
       <div className="w-full h-44 max-h-44 rounded-t-lg overflow-hidden">
         <img src={props.image} alt="post image"
           className="w-full h-44 bg-slate-300 object-cover scale-125 rounded-t-lg group-hover/postCard:scale-100

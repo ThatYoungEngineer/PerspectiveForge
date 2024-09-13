@@ -43,7 +43,6 @@ export const createPost = async (req, res) => {
         res.status(200).json({message: 'Post published successfully'})
 
     } catch (error) {
-        console.log(error)
         if (error.message.includes('buffering timed out')) res.status(504).json({message: 'Network error. Please try again later'})
         else res.status(500).json({ message: "Internal Server Error"})        
     }

@@ -3,7 +3,7 @@ import { useState } from "react"
 import logo from "../assets/images/PerspectiveForge.png"
 import logoLight from "../assets/images/PerspectiveForge-light.png"
 import { Button, Label, TextInput, Alert, Spinner } from "flowbite-react"
-import { IoCloseCircleOutline } from "react-icons/io5"
+import { GoAlertFill } from "react-icons/go"
 import { Link } from "react-router-dom"
 import * as yup from "yup"
 import { useFormik } from "formik"
@@ -133,7 +133,7 @@ const SignIn = () => {
                   </Link>
                 </span>
                 {errorMessage && (
-                  <Alert color="failure" icon={IoCloseCircleOutline}>
+                  <Alert color="failure" icon={GoAlertFill}>
                     {errorMessage}
                   </Alert>
                 )}

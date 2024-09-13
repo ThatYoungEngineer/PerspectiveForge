@@ -279,6 +279,20 @@ export const getUsersData = async (req, res) => {
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})
         else res.status(500).json({ message: "Internal Server Error! Please try again later." })    
     }
+}
 
+export const getUserById = async (req, res) => {
+    try {
+        const {userId} = req.params
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        } else {
+            return res.status(200).json(user);
+        }
+    } catch (error) {
+        if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})
+        else res.status(500).json({ message: "Internal Server Error! Please try again later." })    
+    }
 
 }
