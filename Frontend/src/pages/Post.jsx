@@ -32,7 +32,7 @@ const Post = () => {
   : 
     error ? 
       <div className='h-[90vh] FlexCenter'>
-        <Alert color='failure' icon={GoAlertFill} > {error}! Invalid Slug </Alert>
+        <Alert color='failure' icon={GoAlertFill} > {error} </Alert>
       </div>
     :
     <section className={`flex items-center flex-col gap-5 lg:gap-10 px-5 lg:px-16 xl:px-28 ${currentUser?.userData?.isAdmin ? 'py-5' : 'py-16'} `}>

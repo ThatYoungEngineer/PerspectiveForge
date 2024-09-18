@@ -23,7 +23,7 @@ const SignIn = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  let from = location.state?.prevLocation || '/login'
+  let from = location.state?.prevLocation || '/'
 
   const schema = yup.object().shape({
     email: yup

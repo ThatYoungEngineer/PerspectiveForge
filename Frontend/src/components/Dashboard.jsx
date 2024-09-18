@@ -44,7 +44,6 @@ const Dashboard = () => {
         if (!post || post.length === 0 || data == null) getUserData()
     }, [post]);
 
-    console.log('data: ', data)
     return (
         <>
             {currentUser.userData.isAdmin

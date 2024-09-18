@@ -93,6 +93,7 @@ export const getPosts = async (req, res) => {
         }])  
 
     } catch (error) {
+        console.log('error: ', error)
         if (error.message.includes('buffering timed out' || 'ETIMEOUT')) res.status(504).json({message: 'Network error! Please try again later.'})
         else res.status(500).json({ message: "Internal Server Error! Please try again later." })    
     }

@@ -4,7 +4,6 @@ import { useLocation } from "react-router";
 import { useState, useEffect } from "react";
 import CreatePost from "../components/CreatePost";
 import DashboardPosts from "../components/DashboardPosts";
-import UpdatePost from "../components/UpdatePost"
 import DashboardMemo from "../components/Dashboard";
 
 const DashboardLinks = () => {
@@ -25,8 +24,6 @@ const DashboardLinks = () => {
     } else {
       setDash(false)
     }
-    console.log('dashLinks: ', urlParams)
-
   }, [location.search, location.pathname])
 
   return (

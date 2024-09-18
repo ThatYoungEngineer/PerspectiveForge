@@ -20,7 +20,7 @@ import { useLocation, useNavigate } from 'react-router'
 
     const navigate = useNavigate()
     const location = useLocation()  
-    let from = location.state?.prevLocation || '/login'
+    let from = location.state?.prevLocation || '/'
 
     const handleGoogleClick = async () => {
         const auth = getAuth(app)

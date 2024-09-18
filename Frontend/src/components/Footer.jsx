@@ -58,11 +58,11 @@ const Footer = () => {
             year={new Date().getFullYear()}
           />
           <div className="flex gap-6 sm:mt-0 mt-4 sm:justify-center">
-            <Feet.Icon href='' icon={BsFacebook}/>
-            <Feet.Icon href='' icon={BsInstagram}/>
-            <Feet.Icon href='' icon={BsTwitter}/>
-            <Feet.Icon href='https://github.com/ThatYoungEngineer' target='_blank' icon={BsGithub}/>
-            <Feet.Icon href='' icon={BsDribbble}/>
+            {/* <Feet.Icon href='' icon={BsFacebook} target='_blank' />
+            <Feet.Icon href='' icon={BsInstagram} />
+            <Feet.Icon href='' icon={BsTwitter} /> */}
+            <Feet.Icon href='https://github.com/ThatYoungEngineer' target='_blank' icon={BsGithub} />
+            {/* <Feet.Icon href='' icon={BsDribbble} /> */}
           </div>
         </div>
       </div>

@@ -72,11 +72,16 @@ const Header = () => {
                         <Dropdown.Divider />
                         <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>Sign Out</Dropdown.Item>
                     </Dropdown>
-                :   <Link to={'/login'} >
+                :   <div
+                        className="w-fit"
+                        onClick={()=>{navigate('/login',
+                            {replace: false, state: {prevLocation: location?.pathname}}
+                        )}} 
+                    >
                         <Button outline gradientDuoTone="purpleToBlue" className="h-10 md:h-full">
                             Login
                         </Button>
-                    </Link> 
+                    </div> 
                 }
                 { currentUser?.userData && <Navbar.Toggle /> }
             </div>

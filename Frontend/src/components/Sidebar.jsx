@@ -39,7 +39,7 @@ const Sidebar = () => {
 
   return (
     <>
-        <FlowbiteSidebar className="">   
+        <FlowbiteSidebar >   
             <FlowbiteSidebar.ItemGroup className="flex flex-col gap-1">
                 {currentUser.userData.isAdmin &&
                     <Link to={'/dashboard'}>
@@ -63,7 +63,7 @@ const Sidebar = () => {
                             onClick={() => setPostOptions(  prev => !prev )}
                         >
                             Posts
-                            <FaAngleDown active className={`absolute transform top-1/2 -translate-y-1/2 right-3 transition-transform ${postOptions && 'rotate-180'}`} />
+                            <FaAngleDown className={`absolute transform top-1/2 -translate-y-1/2 right-3 transition-transform ${postOptions && 'rotate-180'}`} />
                         </FlowbiteSidebar.Item>
                         {postOptions &&
                             <div className="w-full h-24 flex flex-col gap-2 pl-6" >

@@ -15,8 +15,8 @@ const Hero = () => {
   return (
     <main className='w-screen z-30 min-h-[650px] h-screen max-h-[950px] absolute top-0 left-0 pt-[18vh] lg:pt-[21vh] px-5 lg:px-0 flex items-start justify-center'>
       {theme == 'dark'
-      ?  <img src={heroBG} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top ' />
-      : <img src={heroBGLight} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top ' />
+      ?  <img src={heroBG} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none' />
+      : <img src={heroBGLight} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none' />
       }
       <article className='w-fit h-fit relative z-40 flex flex-col gap-10 items-center justify-start'>
         <Link to={`${currentUser?.userData ? '/dashboard' : '/login'}`}>
@@ -32,7 +32,7 @@ const Hero = () => {
           <h2 className='leading-[2.5rem] md:leading-[4.3rem] lg:leading-[5.3rem]'>Empowering Innovation through <br /> Insight and Expertise.</h2>
         </section>
         <section className={`text-base lg:text-xl font-Onest-Regular md:w-[80%] lg:w-[60%] md:text-center ${theme=='light'?'contentGradientDark':'contentGradient'}`} >
-          <h4>
+          <h4 className='leading-5 lg:leading-7'>
             In-depth knowledge of technology and modern practices that keeps you updated and motivated at any time.
           </h4>
         </section>

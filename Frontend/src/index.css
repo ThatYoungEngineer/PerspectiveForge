@@ -83,7 +83,7 @@ body {
 }
 
 .post-content p {
-    margin-top: 1rem;
+    margin-top: .5rem;
 }
 .post-content h1 {
     font-size: 1.6rem;
@@ -113,9 +113,14 @@ body {
     padding: .8rem;
     width: 100%;
     background-color: #23241f;
-    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border: 5px solid rgb(16,23,42) !important;
     border-radius: 8px;
     line-height: 2rem;
+
+    white-space: pre-wrap;
+}
+.dark .post-content pre {
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
 }
 
 .post-content code {
