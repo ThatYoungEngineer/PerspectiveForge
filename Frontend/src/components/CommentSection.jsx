@@ -84,7 +84,7 @@ const CommentSection = (props) => {
                     )}} 
                     className="w-fit"
                 >
-                    <h2 className="w-fit hover:underline text-teal-300">
+                    <h2 className="w-fit hover:underline text-teal-300 cursor-pointer">
                         Sign in
                     </h2>
                 </div>
