@@ -18,9 +18,7 @@ const CommentSection = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if(comment.length > 200) {
-            return
-        } 
+        if(comment.length > 200) return
         setCommentError(null)
         try {
             const res = await fetch('/api/comment/post-comment', {
@@ -36,7 +34,10 @@ const CommentSection = (props) => {
             })
             if(res.ok) {
                 const data = await res.json()
-                setComments([data.comment, ...comments])
+                console.log('data: ', data)
+                setComment('')
+                setCommentsError(null)
+                setComments([data.comment, ...comments]);
             }            
         } catch (error) {
             setCommentError(error.message)
@@ -52,7 +53,8 @@ const CommentSection = (props) => {
                 })
                 if(res.ok) {
                     const data = await res.json()
-                    setComments(data)
+                    if (data?.message) setCommentsError(data.message)
+                    else setComments(data)
                 }
             } catch (error) {
                 setCommentsError(error.message)
@@ -61,7 +63,6 @@ const CommentSection = (props) => {
         props.id && fetchComments()
 
     }, [props.id])
-
 
   return (
     <div className="px-2 lg:px-5 w-full">
@@ -124,9 +125,9 @@ const CommentSection = (props) => {
             </div>
         }
         <section className="w-full flex flex-col gap-5 my-10">
-            {comments?.message 
+            {commentsError 
             ?   
-                <p className="w-full text-center italic">{comments?.message}</p>
+                <p className="w-full text-center italic">{commentsError}</p>
             :   
                 comments?.map((c) => (
                     <Comment 
