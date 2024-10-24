@@ -86,7 +86,7 @@ const Posts = () => {
                           </Link>
                         </section>
 
-                        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 ">
+                        <div className="table-auto overflow-x-auto md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 ">
                             <Table hoverable className="shadow-md rounded-xl" >
                                 <Table.Head >
                                     <Table.HeadCell className="w-1/6 whitespace-nowrap" >Date Updated</Table.HeadCell>
