@@ -55,36 +55,46 @@ const Sidebar = () => {
                 </Link>
                 {currentUser.userData.isAdmin &&
                     <>
-                        <FlowbiteSidebar.Item
+                       <FlowbiteSidebar.Item
                             icon={HiDocumentText}
-                            active={tab=='posts'||tab=='create-new-post'}
-                            as='div'
+                            active={tab === 'posts' || tab === 'create-new-post'}
+                            as="div"
                             className="relative cursor-pointer"
-                            onClick={() => setPostOptions(  prev => !prev )}
+                            onClick={() => setPostOptions((prev) => !prev)}
                         >
                             Posts
-                            <FaAngleDown className={`absolute transform top-1/2 -translate-y-1/2 right-3 transition-transform ${postOptions && 'rotate-180'}`} />
+                            <FaAngleDown
+                                className={`absolute transform top-1/2 -translate-y-1/2 right-3 transition-transform ${postOptions && 'rotate-180'}`}
+                            />
                         </FlowbiteSidebar.Item>
-                        {postOptions &&
-                            <div className="w-full h-24 flex flex-col gap-2 pl-6" >
-                                <Link to='/dashboard?tab=create-new-post' > 
-                                    <FlowbiteSidebar.Item icon={IoCreate}
-                                        active={tab=='create-new-post'}
-                                        as='div'                                    
-                                    >
-                                        Create Post
-                                    </FlowbiteSidebar.Item>
-                                </Link>
-                                <Link to='/dashboard?tab=posts' >
-                                    <FlowbiteSidebar.Item icon={MdOutlineManageSearch}
-                                        active={tab=='posts'}
-                                        as='div'
-                                    >
-                                        Manage Post
-                                    </FlowbiteSidebar.Item>
-                                </Link>
-                            </div>
-                        }
+                        <div
+                            className={`overflow-hidden transition-all ease-in-out duration-300 ${postOptions ? 'max-h-40 mt-2' : 'max-h-0'}`}
+                            style={{
+                                maxHeight: postOptions ? '160px' : '0',
+                                transition: 'all 300ms ease-in-out',
+                            }}
+                        >
+                            <Link to="/dashboard?tab=create-new-post">
+                                <FlowbiteSidebar.Item
+                                    icon={IoCreate}
+                                    active={tab === 'create-new-post'}
+                                    as="div"
+                                    className="pl-6"
+                                >
+                                    Create Post
+                                </FlowbiteSidebar.Item>
+                            </Link>
+                            <Link to="/dashboard?tab=posts">
+                                <FlowbiteSidebar.Item
+                                    icon={MdOutlineManageSearch}
+                                    active={tab === 'posts'}
+                                    as="div"
+                                    className="pl-6"
+                                >
+                                    Manage Post
+                                </FlowbiteSidebar.Item>
+                            </Link>
+                        </div>
                     </>
                 }
                 <FlowbiteSidebar.Item 
