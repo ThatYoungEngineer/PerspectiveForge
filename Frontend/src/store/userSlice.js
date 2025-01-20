@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const initialState = {
     currentUser : null,
     status: 'idle',
-    error : null,
+    error : null
 }
 
 export const signInUser = createAsyncThunk(

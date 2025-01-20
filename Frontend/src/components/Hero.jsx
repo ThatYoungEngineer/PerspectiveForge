@@ -14,10 +14,10 @@ const Hero = () => {
 
   return (
     <main className='w-screen z-30 min-h-[650px] h-screen max-h-[950px] absolute top-0 left-0 pt-[18vh] lg:pt-[21vh] px-5 lg:px-0 flex items-start justify-center'>
-      {theme == 'dark'
-      ?  <img src={heroBG} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none' />
-      : <img src={heroBGLight} alt="" className='absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none' />
-      }
+
+      <img src={heroBG} alt="hero-background-dark" className={` ${theme === 'dark' ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none`} />
+      <img src={heroBGLight} alt="hero-background-light" className={` ${theme === 'dark' ? 'opacity-0' : 'opacity-100'} absolute top-0 left-0 w-screen min-h-[650px] h-screen max-h-[950px] object-cover lg:object-right-top pointer-events-none`} />
+
       <article className='w-fit h-fit relative z-40 flex flex-col gap-10 items-center justify-start'>
         <Link to={`${currentUser?.userData ? '/dashboard' : '/login'}`}>
           <section className='w-fit bg-transparent rounded-full text-[.6rem] md-mobile:text-sm newFeatureShadow cursor-pointer'>

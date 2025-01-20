@@ -17,6 +17,7 @@ import Footer from "./components/Footer"
 import UpdatePost from "./components/UpdatePost"
 import Posts from "./pages/Posts"
 import Post from "./pages/Post"
+import PrivacyPolicy from "./pages/PrivacyPolicy"
 
 const App = () => {
 
@@ -51,6 +52,7 @@ const App = () => {
           <Route path="/login" element={<SignIn />} />
         </Route>
         <Route path="/about" element={<About />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route element={<PrivateRoutes />} >
           <Route path="/dashboard" element={<DashboardLinks />} />
           <Route element={<AdminRoutes />}>
