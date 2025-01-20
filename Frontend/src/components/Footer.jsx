@@ -44,7 +44,9 @@ const Footer = () => {
             <div>
               <Feet.Title title='Legal' />
               <Feet.LinkGroup col>
-                <Feet.Link href=''>Privacy Policy</Feet.Link>
+                <Link to='/privacy-policy'>
+                  <Feet.Link>Privacy Policy</Feet.Link>
+                </Link>
                 <Feet.Link href=''>Terms &amp; Conditions</Feet.Link>
               </Feet.LinkGroup>
             </div>
