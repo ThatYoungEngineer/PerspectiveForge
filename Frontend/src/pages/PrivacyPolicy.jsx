@@ -96,7 +96,7 @@ const PrivacyPolicy = () => {
             "title": "Contact Us",
             "content": [
                 {
-                    "description": "If you have any questions or concerns about this Privacy Policy, please contact us at [Insert Contact Email]."
+                    "description": "If you have any questions or concerns about this Privacy Policy, please contact us at support@perspectiveforge.com."
                 }
             ]
         }
